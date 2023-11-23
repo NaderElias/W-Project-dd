@@ -54,9 +54,6 @@ const ticketSchema = new mongoose.Schema({
 	workflow: {
 		type: [String],
 	},
-	autoWorkFlow: {
-		type: Object,
-	},
 	createdAt: {
 		type: Date,
 		default: { $$NOW: true },
