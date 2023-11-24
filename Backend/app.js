@@ -1,8 +1,6 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const productRouter = require("./Routes/products");
-const userRouter = require("./Routes/users");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -10,9 +8,6 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   next()
 });
-
-app.use("/products", productRouter);
-app.use("/users", userRouter);
 
 const db_name = "Wbase";
 const db_url = `mongodb+srv://ziadshafiq7:qwer1234QWER@cluster0.wbady4f.mongodb.net/${db_name}`;

@@ -51,6 +51,9 @@ const ticketSchema = new mongoose.Schema({
 	resolutionDetails: {
 		type: String,
 	},
+	rating: {
+		type: Number,
+	},
 	workflow: {
 		type: [String],
 	},
