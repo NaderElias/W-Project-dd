@@ -55,7 +55,7 @@ const ticketSchema = new mongoose.Schema({
 		type: Number,
 	},
 	workflow: {
-		type: [String],
+		type: String,
 	},
 	createdAt: {
 		type: Date,
