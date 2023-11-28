@@ -1,6 +1,18 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const ticketRouter = require("./Routes/tickets");
+const userRouter = require("./Routes/users");
+const authRouter = require("./Routes/auth");
+const automationRouter = require("./Routes/automation");
+const brandingRouter = require("./Routes/branding");
+const chatRouter = require("./Routes/chats");
+const knowledgeBaseRouter = require("./Routes/knowledgeBase");
+const reportsRouter = require("./Routes/reports");
+require('dotenv').config();
+
+const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
+const cors = require("cors");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -9,8 +21,28 @@ app.use((req, res, next) => {
   next()
 });
 
-const db_name = "Wbase";
-const db_url = `mongodb+srv://ziadshafiq7:qwer1234QWER@cluster0.wbady4f.mongodb.net/${db_name}`;
+app.use(cookieParser())
+
+app.use(
+  cors({
+    origin: process.env.ORIGIN,
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    credentials: true,
+  })
+);
+
+app.use("/api", authRouter);
+app.use(authenticationMiddleware);
+app.use("/api/tickets", ticketRouter);
+app.use("/api/users", userRouter);
+app.use("/api/automation", automationRouter);
+app.use("/api/branding", brandingRouter);
+app.use("/api/chats", chatRouter);
+app.use("/api/knowledgeBase", knowledgeBaseRouter);
+app.use("/api/reports", reportsRouter);
+
+const db_name = process.env.DB_NAME;
+const db_url = `${process.env.DB_URL}/${db_name}`;
 
 const connectionOptions = {
   useUnifiedTopology: true,
