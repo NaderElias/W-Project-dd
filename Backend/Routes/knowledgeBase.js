@@ -1,2 +1,1 @@
-//user: get knowledgeBase
-//user: filter knowledgeBase
+//user: get/filter knowledgeBase
