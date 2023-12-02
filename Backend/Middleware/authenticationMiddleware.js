@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-const secretKey = "s1234rf,.lp";
+require('dotenv').config();
+const secretKey = process.env.SECRET_KEY;
 
 module.exports = function authenticationMiddleware(req, res, next) {
   const cookie = req.cookies;
@@ -7,7 +8,7 @@ module.exports = function authenticationMiddleware(req, res, next) {
   if (!cookie) {
     return res.status(401).json({ message: "No Cookie provided" });
   }
-  const token = cookie.token;
+  const token = cookie.accessToken;
   if (!token) {
     return res.status(405).json({ message: "No token provided" });
   }
