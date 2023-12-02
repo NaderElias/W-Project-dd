@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const authorizationMiddleware = require('../Middleware/authorizationMiddleware');
-const userController = require('../controllers/userController');
+const userController = require('../Controller/userController');
 
 router
   .route('/create')

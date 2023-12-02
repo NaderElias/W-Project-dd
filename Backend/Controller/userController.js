@@ -1,7 +1,7 @@
 const userModel = require("../Models/userModel");
 const sessionModel = require("../Models/sessionModel");
 const securityModel = require("../Models/securityModel");
-//not sure to add workFlowModel or not
+
 
 require('dotenv').config();
 const jwt = require("jsonwebtoken");
@@ -95,7 +95,7 @@ const userController = {
             res.status(500).json({ message: "Internal Server Error" });
         }
     },
-    //not sure about the logout 
+    
     logout: async (req, res) => {
         try {
             const accessToken = req.cookies.accessToken;
@@ -119,15 +119,16 @@ const userController = {
     createUser: async (req, res) => {
 		try {
 			// Extract user data from the request body
-			const { username, password, role, profile } = req.body;
+			const {email, password, role, profile } = req.body;
 
 			// Create a new user
-			const newUser = new User({
-				username,
+			const newUser = new userModel({
+				email,
 				password,
 				role,
 				profile,
 			});
+         
 
 			// Save the user to the database
 			await newUser.save();
@@ -143,9 +144,9 @@ const userController = {
 	// Route to assign a role to a user, accessible only to admins
 	assignRole: async (req, res) => {
 		try {
-			const { userId, newRole } = req.body;
+			const { email, newRole } = req.body;
 			// Find the user by user ID
-			const user = await User.findById(userId);
+			const user = await userModel.findone(email);
 
 			if (!user) {
 				return res.status(404).json({ message: "User not found" });
