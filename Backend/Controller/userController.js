@@ -3,8 +3,9 @@ const sessionModel = require("../Models/sessionModel");
 const securityModel = require("../Models/securityModel");
 //not sure to add workFlowModel or not
 
+require('dotenv').config();
 const jwt = require("jsonwebtoken");
-const secertKey = process.env.SECRET_KEY;
+const secretKey = process.env.SECRET_KEY;
 const bcrypt = require("bcrypt");
 
 const userController = {
@@ -12,11 +13,10 @@ const userController = {
         try {
             //get the data from the request body
             //not sure about the profile
-            const { username, password, salt, role, profile } = req.body;
+            const { email, password, profile } = req.body;
 
             //check if the user already exists
-            //!!! not sure about the username should i use profile email
-            const existingUser = await userModel.findOne({ username: username });
+            const existingUser = await userModel.findOne({ email: email });
             if (existingUser) {
                 return res.status(400).json({ message: "User already exists" });
             }
@@ -25,10 +25,8 @@ const userController = {
             const hashedPassword = await bcrypt.hash(password, saltRounds);
             //create a new user
             const newUser = new userModel({
-                username,
+                email,
                 password: hashedPassword,
-                salt,
-                role,
                 profile,
             });
             //save the user to the database
@@ -43,34 +41,44 @@ const userController = {
     },
     login : async (req, res) => {
         try {
-            //should i add the profile for email ?
-            const {username , password} = req.body;
-            //find the user by username
-            const user = await userModel.findOne({username: username});
+            const {email, password} = req.body;
+            //find the user by email
+            const user = await userModel.findOne({email: email});
             //if user not found
             if(!user){
-                return res.status(404).json({message: "User not found"});
+                return res.status(400).json({message: "Invalid credentials"});
             }
             //compare the password
             const isMatch = await bcrypt.compare(password, user.password);
             //if password not match
             if(!isMatch){
-                return res.status(405).json({message: "Invalid credentials"});
+                return res.status(400).json({message: "Invalid credentials"});
             }
+            const session = await sessionModel.findOne({userID: user._id});
+            console.log("session|| "+ session)
+            let n;
+            if(session){
+                n = await sessionModel.findByIdAndDelete(session._id)
+            }
+            console.log("n|| "+ n)
             //generate the access token
             const currentDateTime = new Date();
-            const expirationDateTime = new Date(+currentDateTime +1800000); //expires in 3 minutes
+            const expirationDateTime = new Date(+currentDateTime +1800000); //expires in 30 minutes
             const accessToken = jwt.sign({
-                user: {userId: user._id, username: user.username, role: user.role}},
-                secertKey,
+                user: {userId: user._id, role: user.role}},
+                secretKey,
                 {
                     expiresIn: 3*60*60,
                 }
             );
+            let timeStamps = {
+                createdAt: currentDateTime,
+                expiredAt: expirationDateTime
+            }
             let newSession = new sessionModel({
-                userId: user._id,
-                accessToken: accessToken,
-                expirationDateTime: expirationDateTime,
+                userID: user._id,
+                token: accessToken,
+                timeStamps: timeStamps,
             });
             await newSession.save();
             return res
@@ -91,11 +99,17 @@ const userController = {
     logout: async (req, res) => {
         try {
             const accessToken = req.cookies.accessToken;
-            await sessionModel.deleteOne({accessToken: accessToken});
-            return res
-            .clearCookie("accessToken")
-            .status(200)
-            .json({message: "User logged out successfully"});
+            const session = await sessionModel.findOne({token: accessToken});
+    
+            if (session) {
+                await sessionModel.deleteOne({token: accessToken});
+                return res
+                .clearCookie("accessToken")
+                .status(200)
+                .json({message: "User logged out successfully"});
+            } else {
+                return res.status(400).json({message: "User is already logged out"});
+            }
         } catch (error) {
             console.error("Error in userController.logout: ", error);
             res.status(500).json({ message: "Internal Server Error" });

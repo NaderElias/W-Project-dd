@@ -1,6 +1,8 @@
 const express = require("express");
+const cookieParser=require('cookie-parser')
 const app = express();
 const mongoose = require("mongoose");
+//always comment what you don't user
 const ticketRouter = require("./Routes/tickets");
 const userRouter = require("./Routes/users");
 const authRouter = require("./Routes/auth");
@@ -9,8 +11,8 @@ const brandingRouter = require("./Routes/branding");
 const chatRouter = require("./Routes/chats");
 const knowledgeBaseRouter = require("./Routes/knowledgeBase");
 const reportsRouter = require("./Routes/reports");
-require('dotenv').config();
 
+require('dotenv').config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
 
@@ -31,6 +33,7 @@ app.use(
   })
 );
 
+//always comment what you don't use
 app.use("/api", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/tickets", ticketRouter);
