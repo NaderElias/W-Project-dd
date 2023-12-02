@@ -2,7 +2,7 @@ const express = require("express");
 const cookieParser=require('cookie-parser')
 const app = express();
 const mongoose = require("mongoose");
-//always comment what you don't user
+//always comment what you don't use
 const ticketRouter = require("./Routes/tickets");
 const userRouter = require("./Routes/users");
 const authRouter = require("./Routes/auth");
