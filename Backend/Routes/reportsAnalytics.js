@@ -13,4 +13,12 @@ router
   .route('/create-Report')
   .post(authorizationMiddleware(['manager']), reportController.createReport);
 
+  router
+  .route('/get-All-Reports')
+  .get(authorizationMiddleware(['manager']), reportController.getAllReports);
+
+  router
+  .route('/update-Reports')
+  .put(authorizationMiddleware(['manager']), reportController.updateReport);
+
 module.exports = router;
