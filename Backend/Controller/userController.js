@@ -62,7 +62,7 @@ userController = {
 	updateProfile: async (req, res) => {
 		try {
 			// Extract user data from the request body
-			const { userId, firstName, lastName, email } = req.body;
+			const { firstName, lastName, email } = req.body;
 			// const user = await User.findById(userId);
 			// Update the user's profile
 			req.user.profile.firstName = firstName;
