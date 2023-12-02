@@ -1,4 +1,4 @@
-const User = require('../models/userModel');
+const User = require('../Models/userModel');
 
 // Route to create a new user, accessible only to admins
 const createUser = async (req, res) => {
@@ -60,17 +60,21 @@ const assignRole = async (req, res) => {
   const updateProfile = async (req, res) => {
     try {
       // Extract user data from the request body
-      const { firstName, lastName, email } = req.body;
-  
+      const {userId, firstName, lastName, email } = req.body;
+     // const user = await User.findById(userId);
       // Update the user's profile
       req.user.profile.firstName = firstName;
       req.user.profile.lastName = lastName;
       req.user.profile.email = email;
-  
+
+      //user.profile.firstName = firstName;
+      //user.profile.lastName = lastName;
+      //user.profile.email = email;
       // Save the updated user to the database
       await req.user.save();
-  
+      //await user.save();
       res.status(200).json({ message: 'Profile updated successfully', user: req.user });
+      //res.status(200).json({ message: 'Profile updated successfully', user: user });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'server error' });
@@ -78,6 +82,8 @@ const assignRole = async (req, res) => {
   };
 // Route to get user profile, accessible to all authenticated users
 const getProfile = async (req, res) => {
+    //const user = await User.findById(userId);
+   //   res.status(200).json({ users: user});
     res.status(200).json({ user: req.user });
   };
   module.exports = {
