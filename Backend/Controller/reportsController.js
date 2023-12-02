@@ -1,12 +1,14 @@
 const reportModel = require("../Models/reportModel");
-//const sessionModel = require("../Models/sessionModel");
+const sessionModel = require("../Models/sessionModel");
 const reportController = {
     createReport: async (req, res) => {
 
 		try {
 			// Extract report data from the request body
-			const {managerId, ticketId, ticketStatus, resolutionTime, agentPerformance } = req.body;
-            //const managerid = await sessionModel.findOne({ userID: user._id });
+			const { ticketId, ticketStatus, resolutionTime, agentPerformance } = req.body;
+			const targetToken = req.cookies.accessToken;
+			const session = await sessionModel.findOne({ token: targetToken }).select('userID');
+			const managerId = session.userID;
 			// Create a new report
 			const newReport = new reportModel({
                 managerId,
@@ -15,10 +17,13 @@ const reportController = {
                 resolutionTime, 
                 agentPerformance
 			});
-            
+			//check if the report already exists
+            const existingReport = await reportModel.findOne({ ticketId: ticketId });
+			if (existingReport) {
+				return res.status(400).json({ message: "report already exists" });
+			}
 			// Save the report to the database
 			await newReport.save();
-            //console.log(managerid)
             
             	res
 				.status(201)
