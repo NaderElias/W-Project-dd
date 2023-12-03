@@ -10,7 +10,7 @@ const reportController = require('../Controller/reportsController');
 router
   .route('/create-Report')
   .post(authorizationMiddleware(['manager']), reportController.createReport);
-
+ 
   router
   .route('/get-All-Reports')
   .get(authorizationMiddleware(['manager']), reportController.getAllReports);

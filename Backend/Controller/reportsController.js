@@ -28,7 +28,7 @@ const reportController = {
 			await newReport.save();
             
             	res
-				.status(201)
+				.status(201)  
 				.json({ message: "Report created successfully", report: newReport });
 		} catch (error) {
 			console.error(error);
@@ -42,18 +42,19 @@ const reportController = {
 			const bod= req.body;
 			console.log(bod.ticketId);
 			if (bod.ticketId) {
-				const particReport = await reportModel.find({ticketId:bod.ticketId});
-				if(!particReport.ticketId){console.log("1");res.status(404).json({message: 'no report exists for thid ticket'})}
+				const particReport = await reportModel.findOne({ticketId:bod.ticketId});
+				console.log(particReport);
+				if(!particReport){return res.status(404).json({message: 'no report exists for thid ticket'})}
 				//console.log(particReport.managerId)
 				console.log("particular");
-				res.status(200).json({ reportsAnalytics : particReport });
+				return res.status(200).json({ reportsAnalytics : particReport });
 			}
 			else {
 				const allReports = await reportModel.find();
-				if(!allReports){console.log("no db");res.status(404).json({message: 'no reports in the database'})}
+				if(!allReports){console.log("no db");return res.status(404).json({message: 'no reports in the database'})}
 				//console.log(allReports.managerId)
 				console.log("all found");
-				res.status(200).json({ reportsAnalytics : allReports });
+				return res.status(200).json({ reportsAnalytics : allReports });
 			}
 			
 		} catch (error) {
@@ -94,10 +95,10 @@ const reportController = {
 	getAnalytics: async(req,res)=>{
 		try{
 			const body= req.body;
-			const issue = await knowledgeBaseModel.aggregate([
+			const issue = await ticketsModel.aggregate([
 				{
 				  $group: { 
-					_id: '$issue', // Group by the 'issue' column
+					_id: '$category', // Group by the 'issue' column
 					count: { $sum: 1 } // Count occurrences of each issue
 				  }
 				},
