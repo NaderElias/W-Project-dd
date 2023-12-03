@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const brandSchema = mongoose.Schema({
-    adminId: {
-        type: Object,
+    brand: {
+        type: String,
         required: true
       },
       colors: {
