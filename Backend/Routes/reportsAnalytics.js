@@ -1,9 +1,7 @@
-//manager: create report
-//manager: get reports
-//manager: update reports
-//manager: create analytics
-//manager: get analytics
-//manager: update analytics
+//manager: create report -done-
+//manager: get reports -done-
+//manager: update reports -done-
+//manager: analytics
 const express = require('express');
 const router = express.Router();
 const authorizationMiddleware = require('../Middleware/authorizationMiddleware');
@@ -20,5 +18,9 @@ router
   router
   .route('/update-Reports')
   .put(authorizationMiddleware(['manager']), reportController.updateReport);
+
+  router
+  .route('/get-Analytics')
+  .get(authorizationMiddleware(['manager']), reportController.getAnalytics);
 
 module.exports = router;

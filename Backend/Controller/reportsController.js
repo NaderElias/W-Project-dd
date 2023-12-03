@@ -1,5 +1,7 @@
 const reportModel = require("../Models/reportModel");
 const sessionModel = require("../Models/sessionModel");
+const ticketsModel = require("../Models/ticketModel");
+const knowledgeBaseModel = require("../Models/knowledgeBaseModel");
 const reportController = {
     createReport: async (req, res) => {
 
@@ -84,6 +86,95 @@ const reportController = {
 				.status(200)
 				.json({ message: "report updated successfully", report: report });
 		} catch (error) {
+			console.error(error);
+			res.status(500).json({ message: "server error" });
+		}
+	},
+
+	getAnalytics: async(req,res)=>{
+		try{
+			const body= req.body;
+			const issue = await knowledgeBaseModel.aggregate([
+				{
+				  $group: { 
+					_id: '$issue', // Group by the 'issue' column
+					count: { $sum: 1 } // Count occurrences of each issue
+				  }
+				},
+				{
+				  $sort: { count: -1 } // Sort in descending order based on the count
+				},
+				{
+				  $limit: 5 // You can adjust this limit based on how many top issues you want
+				}
+			  ]);
+			  const total = await (async () => await ticketsModel.countDocuments({}))();
+			  const statusPercent = await ticketsModel.aggregate([
+				{
+				  $group: {
+					_id: '$status',
+					count: { $sum: 1 }
+				  }
+				},
+				{
+				  $project: {
+					_id: 0,
+					status: '$_id',
+					percentage: { $multiply: [{ $divide: ['$count', total] }, 100] }
+				  }
+				}
+			  ]);
+				const statusPercentfilter = await ticketsModel.aggregate([
+					{
+					  $match: { $or: [{ status: 'open' }, { status: 'in progress' }] } // Filter by open or in progress status
+					},
+					{
+					  $group: {
+						_id: { status: '$status', category: '$category' },
+						count: { $sum: 1 }
+					  }
+					},
+					{
+					  $project: {
+						_id: 0,
+						status: '$_id.status',
+						category: '$_id.category',
+						percentage: { $multiply: [{ $divide: ['$count', total] }, 100] }
+					  }
+					},
+					{
+					  $sort: { category: 1 } // Sort by category in ascending order
+					}
+				  ]);
+				  const relation = await ticketsModel.aggregate([
+					{
+					  $match: { $or: [{ status: 'open' }, { status: 'in progress' }] } // Filter by open or in progress status
+					},
+					{
+					  $group: {
+						_id: { status: '$status', category: '$category', priority: '$priority' },
+						count: { $sum: 1 }
+					  }
+					},
+					{
+					  $project: {
+						_id: 0,
+						status: '$_id.status',
+						category: '$_id.category',
+						priority: '$_id.priority',
+						percentage: { $multiply: [{ $divide: ['$count', total] }, 100] }
+					  }
+					},
+					{
+					  $sort: { category: 1, priority: 1 } // Sort by category and priority in ascending order
+					}
+				  ]);
+			  res
+			  .status(200)
+			  .json({message:'meh',issue:issue,statusPercent:statusPercent,statusPercentfilter:statusPercentfilter,relation:relation})
+			  console.log(issue);
+		}
+		catch (error){
 			console.error(error);
 			res.status(500).json({ message: "server error" });
 		}
