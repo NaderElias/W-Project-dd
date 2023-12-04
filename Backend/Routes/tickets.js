@@ -19,13 +19,13 @@ router
   
 router
 .route('/update-WorkFlow')
-.get(authorizationMiddleware(['agent']), ticketController.updateWorkflow); 
+.put(authorizationMiddleware(['agent']), ticketController.updateWorkflow); 
 
 router
 .route('/update-Ticket')
-.get(authorizationMiddleware(['agent']), ticketController.updateTicket); 
+.put(authorizationMiddleware(['agent']), ticketController.updateTicket); 
 
 router
 .route('/update-Rating')
-.get(authorizationMiddleware(['user']), ticketController.updateTicket); 
+.put(authorizationMiddleware(['user']), ticketController.updateTicket); 
 module.exports = router;

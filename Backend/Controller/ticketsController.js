@@ -118,23 +118,18 @@ const ticketController = {
         return res.status(400).json({ message: "no ticket id provided" });
       }
       const { status, resolutionDetails, rating, workflow } = req.body;
-      if (status == "closed") {
-        const closedAt = new Date();
-        const ticketUpdate = await ticketsModel.findById(bod._id);
-        ticketUpdate.status = status;
-        ticketUpdate.closedAt = closedAt;
-        ticketUpdate.resolutionDetails = resolutionDetails;
-        ticketUpdate.workflow = workflow;
-        await ticketUpdate.save();
-        //send email
-        return res
-          .status(200)
-          .json({ message: "updated succesfully", ticketUpdate: ticketUpdate });
-      }
       const ticketUpdate = await ticketsModel.findById(bod._id);
-      ticketUpdate.status = status;
-      ticketUpdate.resolutionDetails = resolutionDetails;
-      ticketUpdate.workflow = workflow;
+
+      if (status&&status == "closed") {
+        const closedAt = new Date();
+        ticketUpdate.closedAt = closedAt;   
+      }
+      if(resolutionDetails){ ticketUpdate.resolutionDetails = resolutionDetails;}
+      if(rating){ticketUpdate.rating=rating;}
+      if(workflow){ticketUpdate.workflow = workflow;}
+      if(status){ticketUpdate.status = status;}
+     
+      
       await ticketUpdate.save();
       //send email
       return res

@@ -81,11 +81,9 @@ const reportController = {
         req.body;
       const report = await reportModel.findOne({ ticketId: ticketId });
       // Update the report
-
-      report.ticketStatus = ticketStatus;
-      report.resolutionTime = resolutionTime;
-      report.agentPerformance = agentPerformance;
-
+      if(ticketStatus){report.ticketStatus = ticketStatus;}
+      if(resolutionTime){report.resolutionTime = resolutionTime;}
+      if(agentPerformance){report.agentPerformance = agentPerformance;}
       //check if the report exists
       if (!report.ticketId) {
         res.status(404).json({ message: "report does not exist" });
