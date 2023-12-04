@@ -52,12 +52,10 @@ const userController = {
 				return res.status(400).json({ message: "Invalid credentials" });
 			}
 			const session = await sessionModel.findOne({ userID: user._id });
-			console.log("session|| " + session);
 			let n;
 			if (session) {
 				n = await sessionModel.findByIdAndDelete(session._id);
 			}
-			console.log("n|| " + n);
 			//generate the access token
 			const currentDateTime = new Date();
 			const expirationDateTime = new Date(+currentDateTime + 1800000); //expires in 30 minutes

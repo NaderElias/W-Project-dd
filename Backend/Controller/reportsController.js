@@ -41,31 +41,23 @@ const reportController = {
   getAllReports: async (req, res) => {
     try {
       //getting all reports and outputting them
-      const bod = req.body;
-      console.log(bod.ticketId);
-      if (bod.ticketId) {
+      const query = req.query;      if (query.ticketId) {
         const particReport = await reportModel.findOne({
-          ticketId: bod.ticketId,
+          ticketId: query.ticketId,
         });
-        console.log(particReport);
         if (!particReport) {
           return res
             .status(404)
             .json({ message: "no report exists for thid ticket" });
         }
-        //console.log(particReport.managerId)
-        console.log("particular");
         return res.status(200).json({ reportsAnalytics: particReport });
       } else {
         const allReports = await reportModel.find();
         if (!allReports) {
-          console.log("no db");
           return res
             .status(404)
             .json({ message: "no reports in the database" });
         }
-        //console.log(allReports.managerId)
-        console.log("all found");
         return res.status(200).json({ reportsAnalytics: allReports });
       }
     } catch (error) {
@@ -192,7 +184,6 @@ const reportController = {
           statusPercentfilter: statusPercentfilter,
           relation: relation,
         });
-      console.log(issue);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "server error" });

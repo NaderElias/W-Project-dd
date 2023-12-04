@@ -1,7 +1,6 @@
 const reportModel = require("../Models/ticketModel");
 const sessionModel = require("../Models/sessionModel");
 const ticketsModel = require("../Models/ticketModel");
-const workFlowModel = require("../Models/workFlowModel");
 const ticketController = {
   createTicket: async (req, res) => {
     try {
@@ -13,7 +12,7 @@ const ticketController = {
         .select("userID");
       const userId = session.userID;
       const statusTick = open;
-      const priority = hmm;
+      // const priority = hmm;
       const rating = 0;
       const createdAt = new Date();
       // Create a new report
@@ -26,7 +25,7 @@ const ticketController = {
         category,
         subCategory,
         //these are to be decided in the algo
-        priority,
+        // priority,
         assignedAgentId,
         rating,
         workflow,
@@ -58,28 +57,20 @@ const ticketController = {
   getAllTickets: async (req, res) => {
     try {
       //getting all reports and outputting them
-      const bod = req.body;
-      console.log(bod._id);
-      console.log("start");
-      if (bod._id) {
-        const partTicket = await ticketsModel.findById(bod._id); // might add an option to get it by title and categories
+      const query = req.query;
+      if (query._id) {
+        const partTicket = await ticketsModel.findById(query._id); // might add an option to get it by title and categories
         if (!partTicket._id) {
-          console.log("1");
           return res
             .status(404)
-            .json({ message: "this ticket does not exist", bodid: bod._id });
+            .json({ message: "this ticket does not exist", query: query._id });
         }
-        //console.log(particReport.managerId)
-        console.log("particular");
         return res.status(200).json({ partTicket: partTicket });
       } else {
         const allTickets = await ticketsModel.find();
         if (!allTickets) {
-          console.log("no db");
           res.status(404).json({ message: "no tickets in the database" });
         }
-        //console.log(allReports.managerId)
-        console.log("all found");
         return res.status(200).json({ allTickets: allTickets });
       }
     } catch (error) {
