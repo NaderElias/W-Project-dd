@@ -1,6 +1,26 @@
-//manager: create report
-//manager: get reports
-//manager: update reports
-//manager: create analytics
-//manager: get analytics
-//manager: update analytics
+//manager: create report -done-
+//manager: get reports -done-
+//manager: update reports -done-
+//manager: analytics -done-
+const express = require('express');
+const router = express.Router();
+const authorizationMiddleware = require('../Middleware/authorizationMiddleware');
+const reportController = require('../Controller/reportsController');
+//start
+router
+  .route('/create-Report')
+  .post(authorizationMiddleware(['manager']), reportController.createReport);
+ 
+  router
+  .route('/get-All-Reports')
+  .get(authorizationMiddleware(['manager']), reportController.getAllReports);
+
+  router
+  .route('/update-Reports')
+  .put(authorizationMiddleware(['manager']), reportController.updateReport);
+
+  router
+  .route('/get-Analytics')
+  .get(authorizationMiddleware(['manager']), reportController.getAnalytics);
+
+module.exports = router;
