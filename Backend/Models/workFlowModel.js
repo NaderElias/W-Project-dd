@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const workFlowSchema = mongoose.Schema({
     issueType: {
         type: String,
-        required: true
+		enum: ["software", "hardware", "network"],
+		required: true,
       },
     subCategory: {
 		type: String,

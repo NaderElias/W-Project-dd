@@ -1,18 +1,18 @@
 const express = require("express");
-const cookieParser=require('cookie-parser')
+const cookieParser = require("cookie-parser");
 const app = express();
 const mongoose = require("mongoose");
-//always comment what you don't use
+//always comment what you don't user
 const ticketRouter = require("./Routes/tickets");
 const userRouter = require("./Routes/users");
 const authRouter = require("./Routes/auth");
-//const automationRouter = require("./Routes/automation");
-//const brandingRouter = require("./Routes/branding");
-//const chatRouter = require("./Routes/chats");
-//const knowledgeBaseRouter = require("./Routes/knowledgeBase");
-const reportsRouter = require("./Routes/reportsAnalytics");
+const automationRouter = require("./Routes/automation");
+const brandingRouter = require("./Routes/branding");
+const chatRouter = require("./Routes/chats");
+const knowledgeBaseRouter = require("./Routes/knowledgeBase");
+const reportsRouter = require("./Routes/reports");
 
-require('dotenv').config();
+require("dotenv").config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
 
@@ -20,10 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  next()
+  next();
 });
 
-app.use(cookieParser())
+app.use(cookieParser());
 
 app.use(
   cors({
@@ -38,10 +38,10 @@ app.use("/api", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/tickets", ticketRouter);
 app.use("/api/users", userRouter);
-//app.use("/api/automation", automationRouter);
-//app.use("/api/branding", brandingRouter);
-//app.use("/api/chats", chatRouter);
-//app.use("/api/knowledgeBase", knowledgeBaseRouter);
+app.use("/api/automation", automationRouter);
+app.use("/api/branding", brandingRouter);
+app.use("/api/chats", chatRouter);
+app.use("/api/knowledgeBase", knowledgeBaseRouter);
 app.use("/api/reports", reportsRouter);
 
 const db_name = process.env.DB_NAME;
