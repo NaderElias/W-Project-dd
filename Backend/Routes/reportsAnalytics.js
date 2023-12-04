@@ -1,7 +1,7 @@
 //manager: create report -done-
 //manager: get reports -done-
 //manager: update reports -done-
-//manager: analytics
+//manager: analytics -done-
 const express = require('express');
 const router = express.Router();
 const authorizationMiddleware = require('../Middleware/authorizationMiddleware');
