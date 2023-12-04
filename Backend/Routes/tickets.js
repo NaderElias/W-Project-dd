@@ -15,4 +15,17 @@ router
 router
   .route('/get-All-Tickets')
   .get(authorizationMiddleware(['agent', 'manager']), ticketController.getAllTickets); 
+
+  
+router
+.route('/update-WorkFlow')
+.get(authorizationMiddleware(['agent']), ticketController.updateWorkflow); 
+
+router
+.route('/update-Ticket')
+.get(authorizationMiddleware(['agent']), ticketController.updateTicket); 
+
+router
+.route('/update-Rating')
+.get(authorizationMiddleware(['user']), ticketController.updateTicket); 
 module.exports = router;
