@@ -23,6 +23,10 @@ const brandingController = {
       if (!brand || !color) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
+      const customization = await brandModel.findOne({ brand: brand });
+      if (customization) {
+        return res.status(400).json({ message: "brand Already Exists" });
+      }
 
       const newCustomization = new brandModel({
         brand,
@@ -43,11 +47,14 @@ const brandingController = {
 
   updateCustomization: async (req, res) => {
     try {
-      const { brand, color } = req.body;
-      if (!brand || !color) {
+      const { _id, color } = req.body;
+      if (!_id || !color) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
-      const customization = await brandModel.findOne({ brand: brand });
+      if (_id.length !== 24) {
+        return res.status(400).json({ message: "Invalid id" });
+      }
+      const customization = await brandModel.findById(_id);
       if (!customization) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
