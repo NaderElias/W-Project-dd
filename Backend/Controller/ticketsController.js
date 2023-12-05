@@ -133,6 +133,14 @@ const ticketController = {
   },
   updateRating: async(req,res)=>{
 	//to be decided tommorow
+  const {rating,_id} = req.body;
+
+  if(!rating || !_id){return res.status(404).json({message:'rating or id missing'})}
+  const ticket = await ticketsModel.findById(_id);
+  if(!ticket){return res.status(404).json({message:'no ticket found'})}
+  ticket.rating=rating;
+  await ticket.save();
+  return res.status(200).json({message:'rating successfully updated',ticket,ticket});
   }
 };
 module.exports = ticketController;
