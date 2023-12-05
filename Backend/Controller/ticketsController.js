@@ -134,7 +134,7 @@ const ticketController = {
   updateRating: async(req,res)=>{
 	//to be decided tommorow
   const {rating,_id} = req.body;
-
+    //check if the user is the one who created the ticket
   if(!rating || !_id){return res.status(404).json({message:'rating or id missing'})}
   const ticket = await ticketsModel.findById(_id);
   if(!ticket){return res.status(404).json({message:'no ticket found'})}

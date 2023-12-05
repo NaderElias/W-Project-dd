@@ -83,8 +83,8 @@ app.use("/api/tickets", ticketRouter);
 app.use("/api/users", userRouter);
 app.use("/api/automation", automationRouter);
 app.use("/api/branding", brandingRouter);
-app.use("/api/chats", chatRouter);
-app.use("/api/knowledgeBase", knowledgeBaseRouter);
+//app.use("/api/chats", chatRouter);
+//app.use("/api/knowledgeBase", knowledgeBaseRouter);
 app.use("/api/reports", reportsRouter);
 
 mongoose
