@@ -1,6 +1,8 @@
 const reportModel = require("../Models/ticketModel");
 const sessionModel = require("../Models/sessionModel");
 const ticketsModel = require("../Models/ticketModel");
+const usersModel =require("../Models/userModel");
+const emailService = require("../Controller/emailUpdateController");
 const ticketController = {
   createTicket: async (req, res) => {
     try {
@@ -41,8 +43,7 @@ const ticketController = {
       if (existingTicket) {
         return res.status(400).json({ message: "ticket already exists" });
       }
-      //check for the knowledgeBase and if found return and not save ---BEWARE---
-      // Save the report to the database
+     
       await newTicket.save();
 
       res
@@ -59,7 +60,7 @@ const ticketController = {
       //getting all reports and outputting them
       const query = req.query;
       if (query._id) {
-        const partTicket = await ticketsModel.findById(query._id); // might add an option to get it by title and categories
+        const partTicket = await ticketsModel.findById(query._id); 
         if (!partTicket._id) {
           return res
             .status(404)
@@ -90,6 +91,11 @@ const ticketController = {
       updateWorkFlow.workflow = workflow;
       await updateWorkFlow.save();
       //send email
+      const mess='workflow updated'
+      const tick = await ticketsModel.findById(bod._id);
+      const us =await usersModel.findById(tick.userId);
+      const em = us.email;
+      const ema = emailService.sendUpdateEmail(em,mess);
       return res
         .status(200)
         .json({
@@ -105,6 +111,7 @@ const ticketController = {
   updateTicket: async (req, res) => {
     try {
       bod = req.body;
+      var mess = 'ticket updated';
       if (!bod._id) {
         return res.status(400).json({ message: "no ticket id provided" });
       }
@@ -113,7 +120,8 @@ const ticketController = {
 
       if (status&&status == "closed") {
         const closedAt = new Date();
-        ticketUpdate.closedAt = closedAt;   
+        ticketUpdate.closedAt = closedAt; 
+        mess= 'ticket updated and closed'  
       }
       if(resolutionDetails){ ticketUpdate.resolutionDetails = resolutionDetails;}
       if(rating){ticketUpdate.rating=rating;}
@@ -123,6 +131,10 @@ const ticketController = {
       
       await ticketUpdate.save();
       //send email
+      const tick = await ticketsModel.findById(bod._id);
+      const us =await usersModel.findById(tick.userId);
+      const em = us.email;
+      const ema = emailService.sendUpdateEmail(em,mess);
       return res
         .status(200)
         .json({ message: "updated succesfully", ticketUpdate: ticketUpdate });
@@ -132,7 +144,6 @@ const ticketController = {
     }
   },
   updateRating: async(req,res)=>{
-	//to be decided tommorow
   const {rating,_id} = req.body;
     //check if the user is the one who created the ticket
   if(!rating || !_id){return res.status(404).json({message:'rating or id missing'})}

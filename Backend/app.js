@@ -15,7 +15,7 @@ const brandingRouter = require("./Routes/branding");
 const chatRouter = require("./Routes/chats");
 const knowledgeBaseRouter = require("./Routes/knowledgeBase");
 const reportsRouter = require("./Routes/reportsAnalytics");
-
+const emailRouter = require ("./Routes/email");
 require("dotenv").config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
@@ -59,16 +59,7 @@ function backupMongoDB() {
 		console.error(`stderr: ${data}`);
 	});
 	child.on("error", (error) => {
-		console.error(`error: ${error.message}`);
-		child.on("exit", code, (signal) => {
-			if (code) {
-				console.log(`process exit with code ${code} and signal ${signal}`);
-			} else if (signal) {
-				console.log(`process killed with signal ${signal}`);
-			} else {
-				console.log("backup process complete");
-			}
-		});
+		console.error(`error: ${error.message}`); 
 	});
 }
 
@@ -86,7 +77,7 @@ app.use("/api/branding", brandingRouter);
 //app.use("/api/chats", chatRouter);
 //app.use("/api/knowledgeBase", knowledgeBaseRouter);
 app.use("/api/reports", reportsRouter);
-
+app.use("/api/email",emailRouter);
 mongoose
 	.connect(db_url, connectionOptions)
 	.then(() => {
