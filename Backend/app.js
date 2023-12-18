@@ -37,7 +37,7 @@ app.use(
 	})
 );
 
-app.use(bodyParser.json());
+
 
 const db_name = process.env.DB_NAME;
 const db_url = `${process.env.DB_URL}/${db_name}`;

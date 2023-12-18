@@ -3,12 +3,10 @@ const sessionModel = require("../Models/sessionModel");
 const ticketsModel = require("../Models/ticketModel");
 const usersModel =require("../Models/userModel");
 const emailService = require("../Controller/emailUpdateController");
-const bodyParser = require('body-parser');
-const joblib = require('joblib');
-const fs = require('fs');
-const model = joblib.load('./modelpred.pkl');
+const { spawn } = require('child_process');
+const { PythonShell } = require('python-shell')
 
-async function pred (Type,Priority) {
+/*async function pred (Type,Priority) {
   const features = input_data.map(Type,Priority);
         
         // Make probability predictions
@@ -28,7 +26,8 @@ async function pred (Type,Priority) {
             return instanceResult;
           });
 
-}
+}*/
+
 const ticketController = {
 
   
@@ -42,13 +41,27 @@ const ticketController = {
         .findOne({ token: targetToken })
         .select("userID");
       const userId = session.userID;
-      const statusTick = open;
+      const statusTick = "open";
        const priority = Priority;
       const rating = 0;
       const createdAt = new Date();
       // Create a new report
-      const agent=pred(category,priority);
-      console.log(agent);
+     ////////////////////////////////
+     const pythonProcess = spawn(PythonShell, ['predict.py', category, priority]);
+
+pythonProcess.stdout.on('data', (data) => {
+    console.log(`Python script output: ${data}`);
+});
+
+pythonProcess.stderr.on('data', (data) => {
+    console.error(`Error from Python script: ${data}`);
+});
+
+pythonProcess.on('close', (code) => {
+    console.log(`Python script exited with code ${code}`);
+});
+     ///////////////////////////////
+      //console.log(agent);
       const newTicket = new reportModel({
         userId,
         title,
