@@ -3,22 +3,52 @@ const sessionModel = require("../Models/sessionModel");
 const ticketsModel = require("../Models/ticketModel");
 const usersModel =require("../Models/userModel");
 const emailService = require("../Controller/emailUpdateController");
+const bodyParser = require('body-parser');
+const joblib = require('joblib');
+const fs = require('fs');
+const model = joblib.load('./modelpred.pkl');
+
+async function pred (Type,Priority) {
+  const features = input_data.map(Type,Priority);
+        
+        // Make probability predictions
+        const y_pred_prob = model.predict_proba(features);
+
+        // Convert the results to a list of instances with class probabilities
+        const result = y_pred_prob.map((probs, i) => {
+            const instanceResult = {
+                instance: `Instance ${i + 1}`,
+                probabilities: {}
+            };
+
+            model.classes_.forEach((class_label, j) => {
+                instanceResult.probabilities[`Probability for ${class_label}`] = probs[j] * 100;
+            });
+            
+            return instanceResult;
+          });
+
+}
 const ticketController = {
+
+  
+
   createTicket: async (req, res) => {
     try {
       // Extract ticket data from the request body
-      const { title, description, category, subCategory } = req.body;
+      const { title, description, category, subCategory,Priority } = req.body;
       const targetToken = req.cookies.accessToken;
       const session = await sessionModel
         .findOne({ token: targetToken })
         .select("userID");
       const userId = session.userID;
       const statusTick = open;
-      // const priority = hmm;
+       const priority = Priority;
       const rating = 0;
       const createdAt = new Date();
       // Create a new report
-      //machine learning model ---BEWARE---
+      const agent=pred(category,priority);
+      console.log(agent);
       const newTicket = new reportModel({
         userId,
         title,
@@ -27,7 +57,7 @@ const ticketController = {
         category,
         subCategory,
         //these are to be decided in the algo
-        // priority,
+         priority,
         assignedAgentId,
         rating,
         workflow,
