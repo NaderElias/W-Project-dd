@@ -27,5 +27,15 @@ const chatsController = {
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
+  getMessage: async (req, res) => {
+    try {
+      const { chatID } = req.query;
+      const chat = await chatModel.findById(chatID);
+      res.status(200).json({ chat });
+    } catch (error) {
+      console.error("Error in chatsController.getMessage: ", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
 };
 module.exports = chatsController;

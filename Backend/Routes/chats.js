@@ -12,4 +12,11 @@ router
   .route("/add-message")
   .put(authorizationMiddleware(["agent", "user"]), chatsController.addMessage);
 
+router
+  .route("/get-chat")
+  .get(
+    authorizationMiddleware(["manager", "user", "agent"]),
+    chatsController.getMessage
+  );
+
 module.exports = router;

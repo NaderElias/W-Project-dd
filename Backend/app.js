@@ -27,8 +27,8 @@ io.on("connection", (socket) => {
 });
 //always comment what you don't use
 // const ticketRouter = require("./Routes/tickets");
-// const userRouter = require("./Routes/users");
-// const authRouter = require("./Routes/auth");
+const userRouter = require("./Routes/users");
+const authRouter = require("./Routes/auth");
 // const automationRouter = require("./Routes/automation");
 // const brandingRouter = require("./Routes/branding");
 // const chatRouter = require("./Routes/chats");
@@ -98,10 +98,10 @@ cron.schedule("0 0 * * * *", () => {
 });
 
 // always comment what you don't use
-// app.use("/api", authRouter);
-// app.use(authenticationMiddleware);
+app.use("/api", authRouter);
+app.use(authenticationMiddleware);
 // app.use("/api/tickets", ticketRouter);
-// app.use("/api/users", userRouter);
+app.use("/api/users", userRouter);
 // app.use("/api/automation", automationRouter);
 // app.use("/api/branding", brandingRouter);
 // app.use("/api/chats", chatRouter);
