@@ -44,9 +44,9 @@ const Login = () => {
       console.log(response)
       if (status==200) {
         // handleSuccess(message);
-        localStorage.setItem("userId",response.data.user._id)
-        localStorage.setItem("role",response.data.user.role)
-        
+        localStorage.setItem("userId",data.user._id)
+        localStorage.setItem("role",data.user.role)
+        setCookie("token", data.token)
         // setSucessMessage(message)
         setTimeout(() => {
           navigate("/");
@@ -54,8 +54,6 @@ const Login = () => {
       } else {
         console.log();
         // setErrorMessage(message);
-
-
       }
     } catch (error) {
       console.log(error);

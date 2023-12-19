@@ -19,14 +19,11 @@ export default function HomePage() {
         }
         else{
         const uid = localStorage.getItem("userId");
-        console.log(cookies.token);
 
         const response = await axios.get(`${backend_url}/users/get-profile?_id=${uid}`, {
           withCredentials: true,
         });
-        console.log("response", response);
-
-        setUserName(response.data.username);
+        setUserName(response.data.user.username);
     }
       } catch (error) {
         console.log("error");
@@ -38,7 +35,7 @@ export default function HomePage() {
   }, [cookies, navigate]);
   return (
     <>
-      <h1 style={{ textAlign: "center", margin: "30px",color:'white' }}>
+      <h1 style={{ textAlign: "center", margin: "30px",color:'black' }}>
         Welcome {userName}
       </h1>
     </>

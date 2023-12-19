@@ -79,14 +79,14 @@ const userController = {
       });
       await newSession.save();
       return res
-        .cookie("token", accessToken, {
+        .cookie("Token", accessToken, {
           expirationDateTime: expirationDateTime,
           withCredentials: true,
           httpOnly: false,
           sameSite: "none", //should be none for cross origin
         })
         .status(200)
-        .json({ message: "User logged in successfully", user: user });
+        .json({ message: "User logged in successfully", user: user, token: accessToken });
     } catch (error) {
       console.error("Error in userController.login: ", error);
       res.status(500).json({ message: "Internal Server Error" });
