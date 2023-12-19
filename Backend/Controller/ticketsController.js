@@ -5,28 +5,36 @@ const usersModel = require("../Models/userModel");
 const emailService = require("../Controller/emailUpdateController");
 const { spawn } = require("child_process");
 const { PythonShell } = require("python-shell");
+const axios = require('axios');
+async function asssignA (Type,Priority) {
+  
+	const response = await axios.get('http://127.0.0.1:5000//execute_python_script', {
+		params: {
+		  arg1: Type,
+		  arg2: Priority
+		}    
+	  });       
+	//console.log(response.data.result);
+	let dat=response.data.result;
+	console.log(dat);
+	dat=dat.replace(/'/g, '"');
+	console.log(dat);
+	let stringDict = dat;
+	
+// Parse the string to a JavaScript object
+	let resultDict = JSON.parse(stringDict);
 
-/*async function pred (Type,Priority) {
-  const features = input_data.map(Type,Priority);
-        
-        // Make probability predictions
-        const y_pred_prob = model.predict_proba(features);
+// Convert values to float using a loop
+	for (let key in resultDict) {
+		if (resultDict.hasOwnProperty(key)) {
+			resultDict[key] = parseFloat(resultDict[key]);
+		}
+	}
 
-        // Convert the results to a list of instances with class probabilities
-        const result = y_pred_prob.map((probs, i) => {
-            const instanceResult = {
-                instance: `Instance ${i + 1}`,
-                probabilities: {}
-            };
+	console.log(resultDict);  
+      
 
-            model.classes_.forEach((class_label, j) => {
-                instanceResult.probabilities[`Probability for ${class_label}`] = probs[j] * 100;
-            });
-            
-            return instanceResult;
-          });
-
-}*/
+}
 
 const ticketController = {
 	createTicket: async (req, res) => {
@@ -42,26 +50,7 @@ const ticketController = {
 			const priority = Priority;
 			const rating = 0;
 			const createdAt = new Date();
-			// Create a new report
-			////////////////////////////////
-			const pythonProcess = spawn(
-				"python3",
-				["predict.py", category, priority]
-			);
-
-			pythonProcess.stdout.on("data", (data) => {
-				console.log(`Python script output: ${data}`);
-			});
-
-			pythonProcess.stderr.on("data", (data) => {
-				console.error(`Error from Python script: ${data}`);
-			});
-
-			pythonProcess.on("close", (code) => {
-				console.log(`Python script exited with code ${code}`);
-			});
-			 ///////////////////////////////
-			  //console.log(agent);
+			// assign a
 			  const newTicket = new reportModel({
 			    userId,
 			    title,
