@@ -4,6 +4,7 @@ import axios from 'axios';
 const CustomizationForm = () => {
   const [brand, setBrand] = useState('');
   const [color, setColor] = useState('');
+  const [_id, setId] = useState(''); // Assuming you manage the _id in your component state
 
   // Create an axios instance with withCredentials set to true
   const axiosInstance = axios.create({
@@ -44,6 +45,10 @@ const CustomizationForm = () => {
       <div>
         <label>Color:</label>
         <input type="text" value={color} onChange={(e) => setColor(e.target.value)} />
+      </div>
+      <div>
+        <label>ID:</label>
+        <input type="text" value={_id} onChange={(e) => setId(e.target.value)} />
       </div>
       <button onClick={handleCreateCustomization}>Create Customization</button>
       <button onClick={handleUpdateCustomization}>Update Customization</button>
