@@ -18,5 +18,11 @@ router
     authorizationMiddleware(["manager", "user", "agent"]),
     chatsController.getMessage
   );
+router
+  .route("/create-notification")
+  .post(
+    authorizationMiddleware(["agent", "user", "manager"]),
+    chatsController.createNotification
+  );
 
 module.exports = router;

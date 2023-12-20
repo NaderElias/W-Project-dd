@@ -36,6 +36,11 @@ export default function AppNavBar() {
 							Home
 						</Button>
 					</Nav.Item>
+					<Nav.Item>
+        			<Button as={Nav.Link} href="/chat" className="navbar-buttons">
+        			    Start Chat
+      				  </Button>
+   					 </Nav.Item>
 					{localStorage.getItem("role") == "admin" ? (
 						<Nav.Item>
 							<Button as={Nav.Link} href="/userlist" className="navbar-buttons">
@@ -54,8 +59,10 @@ export default function AppNavBar() {
 					) : (
 						<></>
 					)}
+					
 				</Nav>
 				<Nav>
+				
 					<Nav.Item>
 						<Button as={Link} to="/profile" className="navbar-buttons">
 							<FaUser /> {/* FontAwesome User Icon */}
@@ -68,6 +75,7 @@ export default function AppNavBar() {
 					</Nav.Item>
 				</Nav>
 			</Container>
+			
 		</Navbar>
 	);
 }

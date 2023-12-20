@@ -25,7 +25,7 @@ const chatSchema = mongoose.Schema({
     type: Object,
     required: true,
   },
-  agentID: {
+  agentId: {
     type: Object,
     required: true,
   },
