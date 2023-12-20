@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -34,6 +34,10 @@ export default function HomePage() {
     navigate("/userlist");
   };
 
+  const handleBrandingClick = () => {
+    navigate("/branding");
+  };
+
   return (
     <>
       <h1 style={{ textAlign: "center", margin: "30px", color: "black" }}>
@@ -41,6 +45,7 @@ export default function HomePage() {
       </h1>
       <div style={{ textAlign: "center" }}>
         <button onClick={handleUserListClick}>Go to User List</button>
+        <button onClick={handleBrandingClick}>Go to Branding</button>
       </div>
     </>
   );
