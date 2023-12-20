@@ -4,7 +4,7 @@ import axios from 'axios';
 const CustomizationForm = () => {
   const [brand, setBrand] = useState('');
   const [color, setColor] = useState('');
-  const [_id, setId] = useState(''); // Assuming you manage the _id in your component state
+  const [_id, setId] = useState(''); 
 
   // Create an axios instance with withCredentials set to true
   const axiosInstance = axios.create({
