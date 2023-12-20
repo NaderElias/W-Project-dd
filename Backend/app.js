@@ -30,7 +30,7 @@ io.on("connection", (socket) => {
 const userRouter = require("./Routes/users");
 const authRouter = require("./Routes/auth");
 // const automationRouter = require("./Routes/automation");
-// const brandingRouter = require("./Routes/branding");
+ const brandingRouter = require("./Routes/branding");
 // const chatRouter = require("./Routes/chats");
 // const knowledgeBaseRouter = require("./Routes/knowledgeBase");
 // const reportsRouter = require("./Routes/reportsAnalytics");
@@ -103,7 +103,7 @@ app.use(authenticationMiddleware);
 // app.use("/api/tickets", ticketRouter);
 app.use("/api/users", userRouter);
 // app.use("/api/automation", automationRouter);
-// app.use("/api/branding", brandingRouter);
+ app.use("/api/branding", brandingRouter);
 // app.use("/api/chats", chatRouter);
 // app.use("/api/knowledgeBase", knowledgeBaseRouter);
 // app.use("/api/reports", reportsRouter);

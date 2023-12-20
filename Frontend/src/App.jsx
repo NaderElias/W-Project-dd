@@ -8,13 +8,14 @@ import { Route, Router, Routes } from "react-router-dom";
 import Login from "./pages/login";
 import Homepage from "./pages/HomePage";
 import UserManagement from "./pages/UserList";
-
+import CustomizationForm from "./pages/Branding";
 function App() {
   return (
     <Routes>
           <Route path="/" element={<Homepage />} />      
           <Route path="/login" element={<Login  />} />
           <Route path="/userlist" element={<UserManagement />} />
+          <Route path="/branding" element={<CustomizationForm />} />
     </Routes>
   );
 }
