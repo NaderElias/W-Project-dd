@@ -18,6 +18,10 @@ const CustomizationForm = () => {
         color,
       });
       console.log(response.data);
+
+      // Reset state after successful creation
+      setBrand('');
+      setColor('');
     } catch (error) {
       console.error('Error creating customization:', error.response.data.message);
     }
@@ -30,6 +34,10 @@ const CustomizationForm = () => {
         color,
       });
       console.log(response.data);
+
+      // Reset state after successful update
+      setId('');
+      setColor('');
     } catch (error) {
       console.error('Error updating customization:', error.response.data.message);
     }
@@ -46,12 +54,12 @@ const CustomizationForm = () => {
         <label>Color:</label>
         <input type="text" value={color} onChange={(e) => setColor(e.target.value)} />
       </div>
+      <button onClick={handleCreateCustomization}>Create Customization (with Brand and Color)</button>
       <div>
         <label>ID:</label>
         <input type="text" value={_id} onChange={(e) => setId(e.target.value)} />
       </div>
-      <button onClick={handleCreateCustomization}>Create Customization</button>
-      <button onClick={handleUpdateCustomization}>Update Customization</button>
+      <button onClick={handleUpdateCustomization}>Update Customization (with ID and Color)</button>
     </div>
   );
 };
