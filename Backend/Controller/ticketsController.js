@@ -5,196 +5,328 @@ const usersModel = require("../Models/userModel");
 const emailService = require("../Controller/emailUpdateController");
 const { spawn } = require("child_process");
 const { PythonShell } = require("python-shell");
-const axios = require('axios');
-async function asssignA (Type,Priority) {
-  
-	const response = await axios.get('http://127.0.0.1:5000//execute_python_script', {
-		params: {
-		  arg1: Type,
-		  arg2: Priority
-		}    
-	  });       
-	//console.log(response.data.result);
-	let dat=response.data.result;
-	console.log(dat);
-	dat=dat.replace(/'/g, '"');
-	console.log(dat);
-	let stringDict = dat;
-	
-// Parse the string to a JavaScript object
-	let resultDict = JSON.parse(stringDict);
+const axios = require("axios");
+const { Console } = require("console");
+async function assignA(Type, Priority) {
+  const response = await axios.get(
+    "http://127.0.0.1:5000//execute_python_script",
+    {
+      params: {
+        arg1: Type,
+        arg2: Priority,
+      },
+    }
+  );
 
-// Convert values to float using a loop
-	for (let key in resultDict) {
-		if (resultDict.hasOwnProperty(key)) {
-			resultDict[key] = parseFloat(resultDict[key]);
-		}
-	}
+  let dat = response.data.result;
 
-	console.log(resultDict);  
-      
+  dat = dat.replace(/'/g, '"');
 
+  let stringDict = dat;
+
+  let resultDict = JSON.parse(stringDict);
+
+  for (let key in resultDict) {
+    if (resultDict.hasOwnProperty(key)) {
+      resultDict[key] = parseFloat(resultDict[key]);
+    }
+  }
+
+  return resultDict;
+}
+async function checkQ() {
+  let x = 0;
+
+  const tickets = await ticketsModel.aggregate([
+    {
+      $match: { status: "open", assignedAgentId: null },
+    },
+    {
+      $addFields: {
+        priorityOrder: {
+          $cond: {
+            if: { $eq: ["$priority", "high"] },
+            then: 1,
+            else: {
+              $cond: {
+                if: { $eq: ["$priority", "medium"] },
+                then: 2,
+                else: {
+                  $cond: {
+                    if: { $eq: ["$priority", "low"] },
+                    then: 3,
+                    else: 0,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      $sort: { priorityOrder: 1, createdAt: 1 },
+    },
+  ]);
+
+  console.log(tickets);
+  if (!tickets) {
+    return;
+  }
+  for (const ticket of tickets) {
+    const agentDict = await assignA(ticket.category, ticket.priority);
+
+    let allAgentsFull = true;
+
+    const sortedAgents = Object.keys(agentDict).sort(
+      (a, b) => agentDict[b] - agentDict[a]
+    );
+
+    for (const agentName of sortedAgents) {
+      const agentUser = await usersModel.findOne({
+        "profile.username": agentName,
+        role: "agent",
+      });
+
+      if (agentUser) {
+        const agentTickets = await ticketsModel.find({
+          assignedAgentId: agentUser._id,
+        });
+
+        if (agentTickets.length < 5) {
+          allAgentsFull = false;
+
+          await ticketsModel.updateOne(
+            { _id: ticket._id },
+            { assignedAgentId: agentUser._id },
+            { status: "in progress" }
+          );
+          break;
+        }
+      }
+      x++;
+      if (x >= 2) {
+        x = 0;
+        break;
+      }
+    }
+
+    if (allAgentsFull) {
+      console.log("All agents full");
+    }
+  }
+
+  return;
 }
 
 const ticketController = {
-	createTicket: async (req, res) => {
+  deletea: async (req, res) => {
+    checkQ();
+    console.log("suc");
+    return res.status(200).json({ message: "me" });
+
+    /*
 		try {
-			// Extract ticket data from the request body
-			const { title, description, category, subCategory, Priority } = req.body;
-			const targetToken = req.cookies.accessToken;
-			const session = await sessionModel
-				.findOne({ token: targetToken })
-				.select("userID");
-			const userId = session.userID;
-			const statusTick = "open";
-			const priority = Priority;
-			const rating = 0;
-			const createdAt = new Date();
-			// assign a
-			  const newTicket = new reportModel({
-			    userId,
-			    title,
-			    description,
-			    statusTick,
-			    category,
-			    subCategory,
-			    //these are to be decided in the algo
-			     priority,
-			    assignedAgentId,
-			    rating,
-			    workflow,
-			    createdAt, //except this mf
-			    closedAt,
-			  });
-			  //check if the ticket already exists
-			  const existingTicket = await ticketsModel.findOne({
-			    userId: userId,
-			    category: category,
-			    subCategory,
-			  });
-			  if (existingTicket) {
-			    return res.status(400).json({ message: "ticket already exists" });
-			  }
+			// Delete all documents in the ticketsModel collection
+			const result = await ticketsModel.deleteMany({});
+			console.log(`${result.deletedCount} documents deleted from ticketsModel`);
 
-			  await newTicket.save();
+		  } catch (error) {
+			console.error('Error deleting documents:', error);
+		  } 
+			// Disconnect from MongoDB*/
+  },
+  createTicket: async (req, res) => {
+    try {
+      // Extract ticket data from the request body
+      const { title, description, category, subCategory, Priority } = req.body;
+      const targetToken = req.cookies.accessToken;
+      const session = await sessionModel
+        .findOne({ token: targetToken })
+        .select("userID");
+      const userId = session.userID;
+      const status = "open";
+      const priority = Priority;
+      const rating = 0;
+      const createdAt = new Date();
+      let assignedAgentId = null;
+      const workflow = "";
+      let x = 0;
 
-			res
-				.status(201)
-				.json({ message: "ticket created successfully", ticket: newTicket });
-		} catch (error) {
-			console.error(error);
-			res.status(500).json({ message: "server error" });
-		}
-	},
+      const prob = await assignA(category, priority);
+      console.log(prob);
 
-	getAllTickets: async (req, res) => {
-		try {
-			//getting all reports and outputting them
-			const query = req.query;
-			if (query._id) {
-				const partTicket = await ticketsModel.findById(query._id);
-				if (!partTicket._id) {
-					return res
-						.status(404)
-						.json({ message: "this ticket does not exist", query: query._id });
-				}
-				return res.status(200).json({ partTicket: partTicket });
-			} else {
-				const allTickets = await ticketsModel.find();
-				if (!allTickets) {
-					res.status(404).json({ message: "no tickets in the database" });
-				}
-				return res.status(200).json({ allTickets: allTickets });
-			}
-		} catch (error) {
-			console.error(error);
-			res.status(500).json({ message: "server error" });
-		}
-	},
+      const sortedAgents = Object.keys(prob).sort((a, b) => prob[b] - prob[a]);
+      for (const agentName of sortedAgents) {
+        console.log("happy", agentName);
+        const agentUser = await usersModel.findOne({
+          "profile.firstName": agentName,
+          role: "agent",
+        });
+        console.log("ma2", agentUser);
+        if (agentUser) {
+          const agentTickets = await ticketsModel.find({
+            assignedAgentId: agentUser._id,
+          });
+          console.log("agentickets", agentTickets);
+          if (agentTickets.length < 5) {
+            console.log(`Assigning ticket to Agent ${agentName}`);
 
-	updateWorkflow: async (req, res) => {
-		try {
-			bod = req.body;
-			if (!bod._id) {
-				return res.status(404).json({ message: "no id provided" });
-			}
-			const workflow = bod.workflow;
-			const updateWorkFlow = await ticketsModel.findById(bod._id);
-			updateWorkFlow.workflow = workflow;
-			await updateWorkFlow.save();
-			//send email
-			const mess = "workflow updated";
-			const tick = await ticketsModel.findById(bod._id);
-			const us = await usersModel.findById(tick.userId);
-			const em = us.email;
-			const ema = emailService.sendUpdateEmail(em, mess);
-			return res.status(200).json({
-				message: "update successfull",
-				updateWorkFlow: updateWorkFlow,
-			});
-		} catch (error) {
-			console.error(error);
-			res.status(500).json({ message: "server error" });
-		}
-	},
+            assignedAgentId = agentUser._id;
+            statusTick = "in progress";
+            break;
+          }
+        }
+        x++;
+        if (x >= 2) {
+          x = 0;
+          break;
+        }
+      }
 
-	updateTicket: async (req, res) => {
-		try {
-			bod = req.body;
-			var mess = "ticket updated";
-			if (!bod._id) {
-				return res.status(400).json({ message: "no ticket id provided" });
-			}
-			const { status, resolutionDetails, rating, workflow } = req.body;
-			const ticketUpdate = await ticketsModel.findById(bod._id);
+      const newTicket = new ticketsModel({
+        userId,
+        title,
+        description,
+        status,
+        category,
+        subCategory,
+        priority,
+        assignedAgentId,
+        rating,
+        workflow,
+        createdAt,
+      });
+      //check if the ticket already exists
+      const existingTicket = await ticketsModel.findOne({
+        title: title,
+        userId: userId,
+        category: category,
+        subCategory,
+      });
+      if (existingTicket) {
+        return res.status(400).json({ message: "ticket already exists" });
+      }
 
-			if (status && status == "closed") {
-				const closedAt = new Date();
-				ticketUpdate.closedAt = closedAt;
-				mess = "ticket updated and closed";
-			}
-			if (resolutionDetails) {
-				ticketUpdate.resolutionDetails = resolutionDetails;
-			}
-			if (rating) {
-				ticketUpdate.rating = rating;
-			}
-			if (workflow) {
-				ticketUpdate.workflow = workflow;
-			}
-			if (status) {
-				ticketUpdate.status = status;
-			}
+      await newTicket.save();
 
-			await ticketUpdate.save();
-			//send email
-			const tick = await ticketsModel.findById(bod._id);
-			const us = await usersModel.findById(tick.userId);
-			const em = us.email;
-			const ema = emailService.sendUpdateEmail(em, mess);
-			return res
-				.status(200)
-				.json({ message: "updated succesfully", ticketUpdate: ticketUpdate });
-		} catch (error) {
-			console.error(error);
-			res.status(500).json({ message: "server error" });
-		}
-	},
-	updateRating: async (req, res) => {
-		const { rating, _id } = req.body;
-		//check if the user is the one who created the ticket
-		if (!rating || !_id) {
-			return res.status(404).json({ message: "rating or id missing" });
-		}
-		const ticket = await ticketsModel.findById(_id);
-		if (!ticket) {
-			return res.status(404).json({ message: "no ticket found" });
-		}
-		ticket.rating = rating;
-		await ticket.save();
-		return res
-			.status(200)
-			.json({ message: "rating successfully updated", ticket, ticket });
-	},
+      res
+        .status(201)
+        .json({ message: "ticket created successfully", ticket: newTicket });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "server error" });
+    }
+  },
+
+  getAllTickets: async (req, res) => {
+    try {
+      //getting all reports and outputting them
+      const query = req.query;
+      if (query._id) {
+        const partTicket = await ticketsModel.findById(query._id);
+        if (!partTicket._id) {
+          return res
+            .status(404)
+            .json({ message: "this ticket does not exist", query: query._id });
+        }
+        return res.status(200).json({ partTicket: partTicket });
+      } else {
+        const allTickets = await ticketsModel.find();
+        if (!allTickets) {
+          res.status(404).json({ message: "no tickets in the database" });
+        }
+        return res.status(200).json({ allTickets: allTickets });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "server error" });
+    }
+  },
+
+  updateWorkflow: async (req, res) => {
+    try {
+      bod = req.body;
+      if (!bod._id) {
+        return res.status(404).json({ message: "no id provided" });
+      }
+      const workflow = bod.workflow;
+      const updateWorkFlow = await ticketsModel.findById(bod._id);
+      updateWorkFlow.workflow = workflow;
+      await updateWorkFlow.save();
+      //send email
+      const mess = "workflow updated";
+      const tick = await ticketsModel.findById(bod._id);
+      const us = await usersModel.findById(tick.userId);
+      const em = us.email;
+      const ema = emailService.sendUpdateEmail(em, mess);
+      return res.status(200).json({
+        message: "update successfull",
+        updateWorkFlow: updateWorkFlow,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "server error" });
+    }
+  },
+
+  updateTicket: async (req, res) => {
+    try {
+      bod = req.body;
+      var mess = "ticket updated";
+      if (!bod._id) {
+        return res.status(400).json({ message: "no ticket id provided" });
+      }
+      const { status, resolutionDetails, rating, workflow } = req.body;
+      const ticketUpdate = await ticketsModel.findById(bod._id);
+
+      if (status && status == "closed") {
+        const closedAt = new Date();
+        ticketUpdate.closedAt = closedAt;
+        mess = "ticket updated and closed";
+      }
+      if (resolutionDetails) {
+        ticketUpdate.resolutionDetails = resolutionDetails;
+      }
+      if (rating) {
+        ticketUpdate.rating = rating;
+      }
+      if (workflow) {
+        ticketUpdate.workflow = workflow;
+      }
+      if (status) {
+        ticketUpdate.status = status;
+      }
+
+      await ticketUpdate.save();
+      //send email
+      const tick = await ticketsModel.findById(bod._id);
+      const us = await usersModel.findById(tick.userId);
+      const em = us.email;
+      const ema = emailService.sendUpdateEmail(em, mess);
+      return res
+        .status(200)
+        .json({ message: "updated succesfully", ticketUpdate: ticketUpdate });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "server error" });
+    }
+  },
+  updateRating: async (req, res) => {
+    const { rating, _id } = req.body;
+    //check if the user is the one who created the ticket
+    if (!rating || !_id) {
+      return res.status(404).json({ message: "rating or id missing" });
+    }
+    const ticket = await ticketsModel.findById(_id);
+    if (!ticket) {
+      return res.status(404).json({ message: "no ticket found" });
+    }
+    ticket.rating = rating;
+    await ticket.save();
+    return res
+      .status(200)
+      .json({ message: "rating successfully updated", ticket, ticket });
+  },
 };
-module.exports = ticketController;
+module.exports = { ticketController, checkQ };

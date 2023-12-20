@@ -59,7 +59,7 @@ const ticketSchema = new mongoose.Schema({
 	},
 	createdAt: {
 		type: Date,
-		
+		rquired: true,
 	},
 	closedAt: {
 		type: Date,

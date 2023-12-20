@@ -6,11 +6,15 @@
 const express = require('express');
 const router = express.Router();  
 const authorizationMiddleware = require('../Middleware/authorizationMiddleware');
-const ticketController = require('../Controller/ticketsController');
+const {ticketController} = require('../Controller/ticketsController');
 //start
 router
 .route('/create-Ticket')
 .post(authorizationMiddleware(['user']), ticketController.createTicket);
+
+router
+.route('/delete')
+.post(authorizationMiddleware(['user']), ticketController.deletea);
 
 router
   .route('/get-All-Tickets')
