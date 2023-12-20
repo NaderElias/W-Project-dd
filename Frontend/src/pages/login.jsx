@@ -1,15 +1,8 @@
-//import "../stylesheets/auth.css";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import axios from "axios";
-
-// import { config as dotenvConfig } from "dotenv";
-// dotenvConfig();
-// require("dotenv").config();
 let backend_url = 'http://localhost:3000/api';
-
-
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,7 +12,7 @@ const Login = () => {
   });
   const [successMessage, setSucessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [cookies, setCookie] = useCookies(["token"]);
+  const [cookies, setCookie, removeCookies] = useCookies(["token"]);
   const { email, password } = inputValue;
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -95,7 +88,7 @@ const Login = () => {
           {errorMessage} {successMessage}
         </span>
         <span>
-          Dont have an account? <Link to={"/signup"}>Signup</Link>
+          Dont have an account? <Link to={"/register"}>Signup</Link>
         </span>
       </form>
     </div>

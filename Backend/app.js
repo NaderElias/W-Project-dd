@@ -26,14 +26,14 @@ io.on("connection", (socket) => {
   });
 });
 //always comment what you don't use
-// const ticketRouter = require("./Routes/tickets");
+const ticketRouter = require("./Routes/tickets");
 const userRouter = require("./Routes/users");
 const authRouter = require("./Routes/auth");
-// const automationRouter = require("./Routes/automation");
- const brandingRouter = require("./Routes/branding");
-// const chatRouter = require("./Routes/chats");
+const automationRouter = require("./Routes/automation");
+const brandingRouter = require("./Routes/branding");
+const chatRouter = require("./Routes/chats");
 // const knowledgeBaseRouter = require("./Routes/knowledgeBase");
-// const reportsRouter = require("./Routes/reportsAnalytics");
+const reportsRouter = require("./Routes/reportsAnalytics");
 
 require("dotenv").config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
@@ -93,20 +93,20 @@ function backupMongoDB() {
   });
 }
 
-cron.schedule("0 0 * * * *", () => {
+cron.schedule("0 0 * * *", () => {
   backupMongoDB();
 });
 
 // always comment what you don't use
 app.use("/api", authRouter);
 app.use(authenticationMiddleware);
-// app.use("/api/tickets", ticketRouter);
+app.use("/api/tickets", ticketRouter);
 app.use("/api/users", userRouter);
-// app.use("/api/automation", automationRouter);
+app.use("/api/automation", automationRouter);
  app.use("/api/branding", brandingRouter);
-// app.use("/api/chats", chatRouter);
+app.use("/api/chats", chatRouter);
 // app.use("/api/knowledgeBase", knowledgeBaseRouter);
-// app.use("/api/reports", reportsRouter);
+app.use("/api/reports", reportsRouter);
 
 mongoose
   .connect(db_url, connectionOptions)

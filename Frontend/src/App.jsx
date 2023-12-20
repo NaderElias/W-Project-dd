@@ -9,13 +9,18 @@ import Login from "./pages/login";
 import Homepage from "./pages/HomePage";
 import UserManagement from "./pages/UserList";
 import CustomizationForm from "./pages/Branding";
+import ProfilePage from "./pages/Profile";
+import RegisterPage from "./pages/Register"
 function App() {
   return (
     <Routes>
           <Route path="/" element={<Homepage />} />      
           <Route path="/login" element={<Login  />} />
+          <Route path="/register" element={<RegisterPage  />} />
           <Route path="/userlist" element={<UserManagement />} />
           <Route path="/branding" element={<CustomizationForm />} />
+          <Route path="/profile" element={<ProfilePage />} />
+
     </Routes>
   );
 }

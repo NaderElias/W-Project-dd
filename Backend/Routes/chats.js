@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const authorizationMiddleware = require("../Middleware/authorizationMiddleware");
-const chatsController = require("../Controller/chatController");
+const chatsController = require("../Controller/chatsController");
 
 router
   .route("/create")
