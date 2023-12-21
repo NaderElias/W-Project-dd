@@ -46,7 +46,7 @@ const ticketSchema = new mongoose.Schema({
 	},
 	assignedAgentId: {
 		type: Object,
-		required: true,
+		
 	},
 	resolutionDetails: {
 		type: String,
@@ -59,7 +59,7 @@ const ticketSchema = new mongoose.Schema({
 	},
 	createdAt: {
 		type: Date,
-		
+		rquired: true,
 	},
 	closedAt: {
 		type: Date,

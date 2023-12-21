@@ -1,15 +1,25 @@
 const chatModel = require("../Models/chatModel");
-
+const userModel = require("../Models/userModel");
+const notificationModel = require("../Models/notificationModel");
 const chatsController = {
   createChat: async (req, res) => {
     try {
-      const { userID, agentID } = req.body;
+      const { userID, agentId } = req.body;
+      let selectedAgentID = agentId;
+      if (!agentId) {
+        const users = await userModel.find({ role: "agent" });
+        const randomIndex = Math.floor(Math.random() * users.length);
+        selectedAgentID = users[randomIndex]._id;
+      }
       const newChat = new chatModel({
         userID,
-        agentID,
+        agentId: selectedAgentID,
       });
       await newChat.save();
-      res.status(201).json({ message: "Chat created successfully" });
+      res.status(200).json({
+        message: "Chat created successfully",
+        newChat: newChat,
+      });
     } catch (error) {
       console.error("Error in chatsController.createChat: ", error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -34,6 +44,29 @@ const chatsController = {
       res.status(200).json({ chat });
     } catch (error) {
       console.error("Error in chatsController.getMessage: ", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+  createNotification: async (req, res) => {
+    try {
+      const { agentId, message } = req.body;
+      const notification = await notificationModel.findOne({
+        agentId: agentId,
+        message: message,
+      });
+
+      if (notification) {
+        return res.status(400).json({ message: "Notification already exists" });
+      }
+      const newNotification = new notificationModel({
+        agentId,
+        message,
+      });
+
+      await newNotification.save();
+      res.status(200).json({ message: "Notification created successfully" });
+    } catch (error) {
+      console.error("Error in chatsController.createNotification: ", error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },

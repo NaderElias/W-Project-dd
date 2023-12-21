@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import AppNavBar from "../components/navbar";
 
 const CustomizationForm = () => {
   const [brand, setBrand] = useState('');
@@ -44,7 +45,8 @@ const CustomizationForm = () => {
   };
 
   return (
-    <div>
+    <>
+    <AppNavBar />
       <h2>Create/Update Customization</h2>
       <div>
         <label>Brand:</label>
@@ -60,7 +62,7 @@ const CustomizationForm = () => {
         <input type="text" value={_id} onChange={(e) => setId(e.target.value)} />
       </div>
       <button onClick={handleUpdateCustomization}>Update Customization (with ID and Color)</button>
-    </div>
+    </>
   );
 };
 

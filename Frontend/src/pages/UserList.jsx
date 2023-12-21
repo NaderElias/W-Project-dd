@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import AppNavBar from "../components/navbar";
 import axios from 'axios';
 
 const UserManagement = () => {
@@ -85,7 +86,8 @@ const UserManagement = () => {
   };
 
   return (
-    <div>
+    <>
+      <AppNavBar />
       <h2>User Management</h2>
 
       <div>
@@ -178,7 +180,7 @@ const UserManagement = () => {
   </ul>
 </div>
 
-    </div>
+    </>
   );
 };
 
