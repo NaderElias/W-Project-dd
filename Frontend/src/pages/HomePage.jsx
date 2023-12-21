@@ -2,19 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import AppNavBar from "../components/navbar";
 let backend_url = 'http://localhost:3000/api';
-
-const NavigationBar = ({ onUserListClick, onBrandingClick }) => {
-  return (
-    <div style={{ display: "flex", justifyContent: "space-between", backgroundColor: "#f0f0f0", padding: "10px" }}>
-      <div>
-        <button onClick={onUserListClick}>User List</button>
-        <button onClick={onBrandingClick}>Branding</button>
-      </div>
-      {/* You can add more items or styling as needed */}
-    </div>
-  );
-};
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -31,7 +20,7 @@ export default function HomePage() {
           const response = await axios.get(`${backend_url}/users/get-profile?_id=${uid}`, {
             withCredentials: true,
           });
-          setUserName(response.data.user.username);
+          setUserName(response.data.user.profile.username);
         }
       } catch (error) {
         console.log("error");
@@ -52,10 +41,7 @@ export default function HomePage() {
 
   return (
     <>
-      <NavigationBar
-        onUserListClick={handleUserListClick}
-        onBrandingClick={handleBrandingClick}
-      />
+      <AppNavBar />
       <h1 style={{ textAlign: "center", margin: "30px", color: "black" }}>
         Welcome {userName}
       </h1>

@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const authorizationMiddleware = require("../Middleware/authorizationMiddleware");
-const chatsController = require("../Controller/chatController");
+const chatsController = require("../Controller/chatsController");
 
 router
   .route("/create")
@@ -17,6 +17,12 @@ router
   .get(
     authorizationMiddleware(["manager", "user", "agent"]),
     chatsController.getMessage
+  );
+router
+  .route("/create-notification")
+  .post(
+    authorizationMiddleware(["agent", "user", "manager"]),
+    chatsController.createNotification
   );
 
 module.exports = router;

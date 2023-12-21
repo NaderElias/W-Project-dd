@@ -30,7 +30,7 @@ const userController = {
       //save the user to the database
       await newUser.save();
       //send a success message
-      res.status(201).json({ message: "User registered successfully" });
+      res.status(200).json({ message: "User registered successfully" });
     } catch (error) {
       console.error("Error in userController.register: ", error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -95,7 +95,7 @@ const userController = {
 
   logout: async (req, res) => {
     try {
-      const accessToken = req.cookies.accessToken;
+      const accessToken = req.cookies.token;
       const session = await sessionModel.findOne({ token: accessToken });
 
       if (session) {
@@ -199,7 +199,7 @@ const userController = {
       const { _id } = req.query;
       const user = await userModel.findById(_id);
 
-      res.status(200).json({ message: "Profile: ", user: user.profile });
+      res.status(200).json({ message: "Profile: ", user: {email: user.email, profile: user.profile} });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "server error" });
