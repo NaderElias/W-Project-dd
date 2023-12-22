@@ -5,6 +5,7 @@ import axios from "axios";
 let backend_url = "http://localhost:3000/api";
 
 export default function FAQPage() {
+    const [faqs, setFaqs] = useState([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [filteredFaqs, setFilteredFaqs] = useState([]);
 
@@ -18,6 +19,7 @@ export default function FAQPage() {
 				);
 				const data = response.data.FAQs;
 				console.log(data);
+                setFaqs(data);
 				setFilteredFaqs(data);
 			} catch (error) {
 				console.error("Error fetching FAQs:", error);
@@ -28,14 +30,16 @@ export default function FAQPage() {
 	}, []); // The empty dependency array ensures the effect runs only once
 
 	const handleSearchChange = (e) => {
-		const query = e.target.value.toLowerCase();
-		setSearchQuery(query);
+		setSearchQuery(e.target.value);
+	};
 
-		// Filter FAQs based on the search query
+	const handleSearchClick = () => {
+		const query = searchQuery.toLowerCase();
+
 		const filtered = faqs.filter(
 			(faq) =>
-				faq.question.toLowerCase().includes(query) ||
-				faq.answer.toLowerCase().includes(query)
+				faq.title.toLowerCase().includes(query) ||
+				faq.content.toLowerCase().includes(query)
 		);
 		setFilteredFaqs(filtered);
 	};
@@ -46,14 +50,19 @@ export default function FAQPage() {
 			<Container className="mt-5">
 				<h2 className="text-center mb-4">Frequently Asked Questions</h2>
 
-				{/* Search input */}
-				<Form.Control
-					type="text"
-					placeholder="Search FAQs"
-					value={searchQuery}
-					onChange={handleSearchChange}
-					className="mb-4"
-				/>
+				{/* Search input and button */}
+				<Form className="mb-4 d-flex">
+					<Form.Control
+						type="text"
+						placeholder="Search FAQs"
+						value={searchQuery}
+						onChange={handleSearchChange}
+						className="me-2"
+					/>
+					<Button variant="primary" onClick={handleSearchClick}>
+						Search
+					</Button>
+				</Form>
 
 				{/* FAQs list */}
 				{filteredFaqs.map((faq, index) => (
