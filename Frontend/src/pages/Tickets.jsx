@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import "../styles/Tickets.css";
+import TicketCard from "../components/TicketCard";
 
 Modal.setAppElement("#root"); // Set the root element for the modal
 
@@ -22,26 +23,26 @@ function Tickets() {
             withCredentials: true,
           }
         )
-        .then((response) => setTickets(response.data))
+        .then((response) => setTickets(response.data.tickets))
         .catch((error) => console.error("Error fetching tickets:", error));
     } else if (localStorage.getItem("role") === "user") {
-        console.log(tickets);
-        const userId=localStorage.getItem( "userId");
+
       axios
         .get(
-          `http://localhost:3000/api/tickets/get-All-Tickets?userId=${userId}`,
+          `http://localhost:3000/api/tickets/get-All-Tickets?userId=${localStorage.getItem( "userId")}`,
           {
             withCredentials: true,
           }
         )
-        .then((response) => setTickets(response.data))
+        .then((response) => setTickets(response.data.tickets))
         .catch((error) => console.error("Error fetching tickets:", error));}
      else {
       axios
         .get("http://localhost:3000/api/tickets/get-All-Tickets", { withCredentials: true })
-        .then((response) => setTickets(response.data))
+        .then((response) => setTickets(response.data.tickets))
         .catch((error) => console.error("Error fetching tickets:", error));
     }
+    
   }, []); // Empty dependency array ensures the effect runs once on mount
 
   const openModal = () => {
@@ -61,23 +62,22 @@ function Tickets() {
   const createNewTicket  = async () => {
    console.log(newTicket);
    const tick= await axios
-    .post("http://localhost:3000/api/tickets/create-Ticket", newTicket, { withCredentials: true })
-    .then((response) => setTickets(response.data.newTicket))
+    .post(`http://localhost:3000/api/tickets/create-Ticket?userId=${localStorage.getItem("userId")}`, newTicket, { withCredentials: true })
     .catch((error) => console.error("Error creating ticket:", error));
-
-    console.log("New Ticket:", tick.title);
+    closeModal();
 
     // Close the modal after creating the ticket
-    closeModal();
+    
   };
 
   return (
     <div className="Tickets">
      <h1>Your Tickets</h1>
 <div className="ticketContainer">
-  {Array.isArray(tickets) && tickets.length > 0 ? (
+  
+  {tickets.length > 0 ? (
     tickets.map((ticket) => (
-      <TicketCard key={ticket._id} ticket={ticket} />
+      <TicketCard ticketKey={ticket._id} ticket={ticket} />
     ))
   ) : (
     <p>No tickets available.</p>
@@ -90,6 +90,7 @@ function Tickets() {
       </button>
 
       {/* Modal for creating a new ticket */}
+      
       <Modal
   isOpen={isModalOpen}
   onRequestClose={closeModal}

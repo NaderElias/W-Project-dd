@@ -11,7 +11,7 @@ const {ticketController} = require('../Controller/ticketsController');
 router
 .route('/create-Ticket')
 .post(authorizationMiddleware(['user']), ticketController.createTicket);
-
+     
 router
 .route('/delete')
 .post(authorizationMiddleware(['user']), ticketController.deletea);
@@ -31,7 +31,7 @@ router
 
 router
 .route('/update-Rating')
-.put(authorizationMiddleware(['user']), ticketController.updateTicket); 
+.put(authorizationMiddleware(['user']), ticketController.updateRating); 
 
 
 module.exports = router;

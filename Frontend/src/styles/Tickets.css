@@ -108,7 +108,9 @@ select {
 }
 
 .create-button,
-.cancel-button {
+.cancel-button,
+.change-rating-button
+{
   padding: 10px;
   border: none;
   border-radius: 5px;
@@ -125,3 +127,7 @@ select {
   color: white;
 }
 
+.change-rating-button {
+  background-color: #3b04d3;
+  color: white;
+}
