@@ -18,7 +18,6 @@ export default function FAQPage() {
 					{ withCredentials: true }
 				);
 				const data = response.data.FAQs;
-				console.log(data);
                 setFaqs(data);
 				setFilteredFaqs(data);
 			} catch (error) {
