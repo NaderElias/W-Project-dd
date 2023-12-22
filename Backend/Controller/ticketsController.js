@@ -140,12 +140,12 @@ const ticketController = {
     try {
       // Extract ticket data from the request body
       const { title, description, category, subCategory, Priority } = req.body;
-      const targetToken = req.cookies.accessToken;
+      const targetToken = req.cookies.token;
       const session = await sessionModel
         .findOne({ token: targetToken })
         .select("userID");
       const userId = session.userID;
-      const status = "open";
+      const status = "open";   
       const priority = Priority;
       const rating = 0;
       const createdAt = new Date();
@@ -223,6 +223,14 @@ const ticketController = {
     try {
       //getting all reports and outputting them
       const query = req.query;
+      if(query.assignedAgentId){
+        const agentTickets= await ticketsModel.find({assignedAgentId:query.userId}).sort({createdAt:-1});
+        return res.status(200).json({message:'agent tickets',tickets:agentTickets});
+      }
+      if(query.userId){
+        const userTickets= await ticketsModel.find({userId:query.userId}).sort({createdAt:-1});
+        return res.status(200).json({message:'user tickets',tickets:userTickets});
+      }
       if (query._id) {
         const partTicket = await ticketsModel.findById(query._id);
         if (!partTicket._id) {
@@ -313,7 +321,8 @@ const ticketController = {
     }
   },
   updateRating: async (req, res) => {
-    const { rating, _id } = req.body;
+    const  {_id}  = req.query;
+    const {rating} = req.body;
     //check if the user is the one who created the ticket
     if (!rating || !_id) {
       return res.status(404).json({ message: "rating or id missing" });

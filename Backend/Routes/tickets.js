@@ -18,7 +18,7 @@ router
 
 router
   .route('/get-All-Tickets')
-  .get(authorizationMiddleware(['agent', 'manager']), ticketController.getAllTickets); 
+  .get(authorizationMiddleware(['agent', 'manager','user']), ticketController.getAllTickets); 
 
   
 router

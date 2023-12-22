@@ -68,6 +68,15 @@ export default function AppNavBar() {
 					) : (
 						<></>
 					)}
+					{localStorage.getItem("role") == "admin" ?(
+						<></>
+					): (
+						<Nav.Item>
+							<Button as={Nav.Link} href="/tickets" className="navbar-buttons">
+								Tickets
+							</Button>
+						</Nav.Item>
+					 )  }
 				</Nav>
 				<Nav>
 				

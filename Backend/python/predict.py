@@ -14,7 +14,7 @@ def predict():
     HERE = Path(__file__).parent
   
     # load the model
-    model = pickle.load(open(HERE / "./model/model.pkl","rb"))
+    model = pickle.load(open(r"C:\Users\Nader Labib\Documents\Wpro\W-Project\Backend\python\model\model.pkl"))
     type_label_encoder = pickle.load(open(HERE / "./model/type_label_encoder.pkl","rb"))
     prio_label_encoder = pickle.load(open(HERE / "./model/prio_label_encoder.pkl","rb"))
 

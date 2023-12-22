@@ -14,6 +14,7 @@ import RegisterPage from "./pages/Register"
 import ChatPage from "./pages/Chat";
 import ChatRoom from "./pages/ChatRoom";
 import KnowledgeBasePage from "./pages/KnowlengeBasePage";
+import Tickets from "./pages/Tickets";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/chatroom" element={<ChatRoom />} />
           <Route path="/knowledge-base" element={<KnowledgeBasePage />} />
+          <Route path="/tickets" element={<Tickets />} />
 
     </Routes>
   );
