@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cron = require("node-cron");
 const { spawn } = require("child_process");
 const sessionModel = require("./Models/sessionModel");
+const {checkQ} = require('./Controller/ticketsController');
 const http = require("http");
 const socketIo = require("socket.io");
 const server = http.createServer(app);
@@ -94,8 +95,11 @@ function backupMongoDB() {
   });
 }
 
-cron.schedule("0 0 * * * *", () => {
+cron.schedule("0 0 * * *", () => {
   backupMongoDB();
+});
+cron.schedule('0 */6 * * *', () => {
+  checkQ();
 });
 
 // always comment what you don't use
