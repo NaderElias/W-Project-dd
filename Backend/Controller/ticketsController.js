@@ -228,7 +228,8 @@ const ticketController = {
         return res.status(200).json({message:'agent tickets',tickets:agentTickets});
       }
       if(query.userId){
-        const userTickets= await ticketsModel.find({userId:query.userId}).sort({createdAt:-1});
+        const userTickets= await ticketsModel.find({userId:query.userId});
+        console.log(query.userId);
         return res.status(200).json({message:'user tickets',tickets:userTickets});
       }
       if (query._id) {
