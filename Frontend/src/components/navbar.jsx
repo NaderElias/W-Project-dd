@@ -36,11 +36,24 @@ export default function AppNavBar() {
 							Home
 						</Button>
 					</Nav.Item>
+					{localStorage.getItem("role") == "user" ? (
 					<Nav.Item>
         			<Button as={Nav.Link} href="/chat" className="navbar-buttons">
         			    Start Chat
       				  </Button>
    					 </Nav.Item>
+					) : (
+						<></>
+					)}
+					{localStorage.getItem("role") == "agent" ? (
+					<Nav.Item>
+        			<Button as={Nav.Link} href="/chat" className="navbar-buttons">
+        			    Join Chat
+      				  </Button>
+   					 </Nav.Item>
+					) : (
+						<></>
+					)}
 					{localStorage.getItem("role") == "admin" ? (
 						<Nav.Item>
 							<Button as={Nav.Link} href="/userlist" className="navbar-buttons">

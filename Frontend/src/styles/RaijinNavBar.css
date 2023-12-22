@@ -1,0 +1,33 @@
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar-buttons {
+    transition: background-color 0.3s ease;
+  }
+  
+  .navbar-buttons:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  @keyframes notification-bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-2px);
+    }
+  }
+  
+  .notification-button:hover {
+    animation: notification-bounce 1s infinite;
+  }
+  .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .modal-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+  }
