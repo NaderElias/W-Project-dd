@@ -27,6 +27,9 @@ export default function AppNavBar() {
 			console.log(error);
 		}
 	};
+
+	const userRole = localStorage.getItem("role");
+
 	return (
 		<Navbar expand="lg" className="bg-body-tertiary">
 			<Container>
@@ -37,40 +40,40 @@ export default function AppNavBar() {
 						</Button>
 					</Nav.Item>
 					<Nav.Item>
-        			<Button as={Nav.Link} href="/chat" className="navbar-buttons">
-        			    Start Chat
-      				  </Button>
-   					 </Nav.Item>
-					{localStorage.getItem("role") == "admin" ? (
+						<Button as={Nav.Link} href="/chat" className="navbar-buttons">
+							Start Chat
+						</Button>
+					</Nav.Item>
+					{userRole === "admin" && (
 						<Nav.Item>
 							<Button as={Nav.Link} href="/userlist" className="navbar-buttons">
 								User List
 							</Button>
 						</Nav.Item>
-					) : (
-						<></>
 					)}
-					{localStorage.getItem("role") == "admin" ? (
+					{userRole === "admin" && (
 						<Nav.Item>
 							<Button as={Nav.Link} href="/branding" className="navbar-buttons">
 								Brands
 							</Button>
 						</Nav.Item>
-					) : (
-						<></>
 					)}
-					{localStorage.getItem("role") == "user" ? (
+					{userRole === "user" && (
 						<Nav.Item>
 							<Button as={Nav.Link} href="/knowledge-base" className="navbar-buttons">
 								FAQs
 							</Button>
 						</Nav.Item>
-					) : (
-						<></>
+					)}
+					{userRole === "manager" && (
+						<Nav.Item>
+							<Button as={Nav.Link} href="/reports" className="navbar-buttons">
+								Reports
+							</Button>
+						</Nav.Item>
 					)}
 				</Nav>
 				<Nav>
-				
 					<Nav.Item>
 						<Button as={Link} to="/profile" className="navbar-buttons">
 							<FaUser /> {/* FontAwesome User Icon */}
@@ -83,7 +86,6 @@ export default function AppNavBar() {
 					</Nav.Item>
 				</Nav>
 			</Container>
-			
 		</Navbar>
 	);
 }

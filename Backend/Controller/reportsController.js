@@ -8,12 +8,20 @@ const reportController = {
       // Extract report data from the request body
       const { ticketId, ticketStatus, resolutionTime, agentPerformance } =
         req.body;
-      const targetToken = req.cookies.accessToken;
+      const targetToken = req.cookies.token;
       const session = await sessionModel
         .findOne({ token: targetToken })
         .select("userID");
       const managerId = session.userID;
       // Create a new report
+    
+      //check if the report already exists
+      const existingReport = await reportModel.findOne({ ticketId: ticketId });
+
+      console.log(existingReport);
+      if (existingReport) {
+        return res.status(404).json({ message: "report already exists" });
+      }
       const newReport = new reportModel({
         managerId,
         ticketId,
@@ -21,11 +29,7 @@ const reportController = {
         resolutionTime,
         agentPerformance,
       });
-      //check if the report already exists
-      const existingReport = await reportModel.findOne({ ticketId: ticketId });
-      if (existingReport) {
-        return res.status(400).json({ message: "report already exists" });
-      }
+      
       // Save the report to the database
       await newReport.save();
 
@@ -90,6 +94,25 @@ const reportController = {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "server error" });
+    }
+  },
+
+  deleteReport: async (req, res) => {
+    try {
+      const { ticketId } = req.body;
+
+      // Find the report by ticketId and remove it
+      const deletedReport = await reportModel.findOneAndRemove({ ticketId });
+
+      // Check if the report was found and deleted
+      if (!deletedReport) {
+        return res.status(404).json({ message: "Report not found" });
+      }
+
+      res.status(200).json({ message: "Report deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
     }
   },
 
