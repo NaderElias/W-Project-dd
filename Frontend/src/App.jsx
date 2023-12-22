@@ -13,6 +13,7 @@ import ProfilePage from "./pages/Profile";
 import RegisterPage from "./pages/Register"
 import ChatPage from "./pages/Chat";
 import ChatRoom from "./pages/ChatRoom";
+import KnowledgeBasePage from "./pages/KnowlengeBasePage";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/chatroom" element={<ChatRoom />} />
+          <Route path="/knowledge-base" element={<KnowledgeBasePage />} />
 
     </Routes>
   );

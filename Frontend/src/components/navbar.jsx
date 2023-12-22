@@ -59,7 +59,15 @@ export default function AppNavBar() {
 					) : (
 						<></>
 					)}
-					
+					{localStorage.getItem("role") == "user" ? (
+						<Nav.Item>
+							<Button as={Nav.Link} href="/knowledge-base" className="navbar-buttons">
+								FAQs
+							</Button>
+						</Nav.Item>
+					) : (
+						<></>
+					)}
 				</Nav>
 				<Nav>
 				
