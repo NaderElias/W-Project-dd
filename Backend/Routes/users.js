@@ -41,4 +41,8 @@ router
     userController.updatePassword
   );
 
+router
+  .route("/delete-user")
+  .delete(authorizationMiddleware(["admin"]), userController.deleteUser);
+
 module.exports = router;
