@@ -120,7 +120,7 @@ const userController = {
   updatePassword: async (req, res) => {
     try {
       const { _id } = req.query;
-      const { password, newPassword, confirmPassword } = req.body;
+      const { oldPassword, newPassword, confirmNewPassword } = req.body;
       //find the user by email
       const user = await userModel.findById(_id);
       //if user not found
@@ -128,12 +128,12 @@ const userController = {
         return res.status(400).json({ message: "Invalid credentials" });
       }
       //compare the password
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
       //if password not match
       if (!isMatch) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
-      if (newPassword !== confirmPassword) {
+      if (newPassword !== confirmNewPassword) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
       const saltRounds = 10;
@@ -145,7 +145,7 @@ const userController = {
         user: user,
       });
     } catch (error) {
-      console.error("Error in userController.login: ", error);
+      console.error("Error in userController.change-password: ", error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
@@ -213,11 +213,18 @@ const userController = {
   updateProfile: async (req, res) => {
     try {
       // Extract user data from the request body
-      const { email, profile } = req.body;
-      const user = await userModel.findOne({ email: email });
+      const { _id } = req.query;
+      const { profile } = req.body;
+      const user = await userModel.findById(_id);
       // Update the user's profile
 
-      user.profile = profile;
+      const newProfile = {
+        username: profile.newUsername,
+        firstName: profile.newFirstName,
+        lastName: profile.newLastName,
+      };
+
+      user.profile = newProfile;
 
       // Save the updated user to the database
       await user.save();

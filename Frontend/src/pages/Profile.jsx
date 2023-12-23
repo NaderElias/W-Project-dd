@@ -17,13 +17,18 @@ const backend_url = "http://localhost:3000/api";
 export default function ProfilePage() {
   const [cookies, removeCookies] = useCookies(["token"]);
   const [profile, setProfile] = useState({
-    username: "username",
-    firstName: "John",
-    lastName: "Doe",
+    username: "",
+    firstName: "",
+    lastName: "",
   });
   const [email, setEmail] = useState("email");
 
-  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [newUsername, setNewUsername] = useState(profile.username);
+  const [newFirstName, setNewFirstName] = useState(profile.firstName);
+  const [newLastName, setNewLastName] = useState(profile.lastName);
+
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -48,11 +53,46 @@ export default function ProfilePage() {
     fetchData();
   }, [cookies]);
 
-  const handleChangePassword = () => {
-    setShowModal(true);
+  const handleEditProfile = () => {
+    setNewUsername(profile.username);
+    setNewFirstName(profile.firstName);
+    setNewLastName(profile.lastName);
+    setShowEditModal(true);
   };
 
   const handleSaveChanges = async () => {
+    // Handle updating profile logic here
+    console.log("Updating profile...");
+    const response = await axios.put(
+      `${backend_url}/users/update-profile?_id=${localStorage.getItem(
+        "userId"
+      )}`,
+      {
+        profile: {
+          newUsername,
+          newFirstName,
+          newLastName,
+        },
+      },
+      { withCredentials: true }
+    );
+    console.log(response);
+    if (response.status === 200) setProfile(response.data.user.profile);
+    setShowEditModal(false);
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setNewUsername(profile.username);
+    setNewFirstName(profile.firstName);
+    setNewLastName(profile.lastName);
+  };
+
+  const handleChangePassword = () => {
+    setShowPasswordModal(true);
+  };
+
+  const handleSavePasswordChanges = async () => {
     // Handle password change logic here
     console.log("Changing password...");
     const response = await axios.put(
@@ -67,11 +107,11 @@ export default function ProfilePage() {
       { withCredentials: true }
     );
     console.log(response);
-    setShowModal(false);
+    setShowPasswordModal(false);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const handleClosePasswordModal = () => {
+    setShowPasswordModal(false);
     setOldPassword("");
     setNewPassword("");
     setConfirmNewPassword("");
@@ -96,54 +136,36 @@ export default function ProfilePage() {
               <Col xs={6}>
                 <strong>Username:</strong>
               </Col>
-              <Col xs={4} className="text-truncate">
+              <Col xs={6} className="text-truncate">
                 {profile.username}
               </Col>
-              <Col xs={2}>
-                <Button
-                  variant="outline-secondary"
-                  onClick={() => console.log("Change username clicked")}
-                >
-                  Change
-                </Button>
-              </Col>
             </Row>
-            {/* ... (similar code for first name, last name) */}
             <Row className="mb-2">
               <Col xs={6}>
-                <strong>Firstname:</strong>
+                <strong>First Name:</strong>
               </Col>
-              <Col xs={4} className="text-truncate">
+              <Col xs={6} className="text-truncate">
                 {profile.firstName}
               </Col>
-              <Col xs={2}>
-                <Button
-                  variant="outline-secondary"
-                  onClick={() => console.log("Change username clicked")}
-                >
-                  Change
-                </Button>
-              </Col>
             </Row>
             <Row className="mb-2">
               <Col xs={6}>
-                <strong>LastName:</strong>
+                <strong>Last Name:</strong>
               </Col>
-              <Col xs={4} className="text-truncate">
+              <Col xs={6} className="text-truncate">
                 {profile.lastName}
               </Col>
-              <Col xs={2}>
-                <Button
-                  variant="outline-secondary"
-                  onClick={() => console.log("Change username clicked")}
-                >
-                  Change
+            </Row>
+            <Row className="mb-2">
+              <Col xs={12} className="d-flex justify-content-center">
+                <Button variant="primary" onClick={handleEditProfile}>
+                  Edit Profile
                 </Button>
               </Col>
             </Row>
             <Row className="mb-2">
               <Col xs={12} className="d-flex justify-content-center">
-                <Button variant="primary" onClick={handleChangePassword}>
+                <Button variant="danger" onClick={handleChangePassword}>
                   Change Password
                 </Button>
               </Col>
@@ -152,8 +174,56 @@ export default function ProfilePage() {
         </Card>
       </Container>
 
-      {/* Password Change Modal */}
-      <Modal show={showModal} onHide={handleCloseModal}>
+      {/* Edit Profile Modal */}
+      <Modal show={showEditModal} onHide={handleCloseEditModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Profile</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="newUsername">
+              <Form.Label>New Username</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter new username"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="newFirstName">
+              <Form.Label>New First Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter new first name"
+                value={newFirstName}
+                onChange={(e) => setNewFirstName(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="newLastName">
+              <Form.Label>New Last Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter new last name"
+                value={newLastName}
+                onChange={(e) => setNewLastName(e.target.value)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseEditModal}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleSaveChanges}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Change Password Modal */}
+      <Modal show={showPasswordModal} onHide={handleClosePasswordModal}>
         <Modal.Header closeButton>
           <Modal.Title>Change Password</Modal.Title>
         </Modal.Header>
@@ -191,10 +261,10 @@ export default function ProfilePage() {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
+          <Button variant="secondary" onClick={handleClosePasswordModal}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSaveChanges}>
+          <Button variant="primary" onClick={handleSavePasswordChanges}>
             Save Changes
           </Button>
         </Modal.Footer>
