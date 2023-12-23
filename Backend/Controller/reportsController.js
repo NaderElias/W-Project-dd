@@ -14,7 +14,7 @@ const reportController = {
         .select("userID");
       const managerId = session.userID;
       // Create a new report
-    
+
       //check if the report already exists
       const existingReport = await reportModel.findOne({ ticketId: ticketId });
 
@@ -29,7 +29,7 @@ const reportController = {
         resolutionTime,
         agentPerformance,
       });
-      
+
       // Save the report to the database
       await newReport.save();
 
@@ -45,7 +45,8 @@ const reportController = {
   getAllReports: async (req, res) => {
     try {
       //getting all reports and outputting them
-      const query = req.query;      if (query.ticketId) {
+      const query = req.query;
+      if (query.ticketId) {
         const particReport = await reportModel.findOne({
           ticketId: query.ticketId,
         });
@@ -77,9 +78,15 @@ const reportController = {
         req.body;
       const report = await reportModel.findOne({ ticketId: ticketId });
       // Update the report
-      if(ticketStatus){report.ticketStatus = ticketStatus;}
-      if(resolutionTime){report.resolutionTime = resolutionTime;}
-      if(agentPerformance){report.agentPerformance = agentPerformance;}
+      if (ticketStatus) {
+        report.ticketStatus = ticketStatus;
+      }
+      if (resolutionTime) {
+        report.resolutionTime = resolutionTime;
+      }
+      if (agentPerformance) {
+        report.agentPerformance = agentPerformance;
+      }
       //check if the report exists
       if (!report.ticketId) {
         res.status(404).json({ message: "report does not exist" });
@@ -198,15 +205,13 @@ const reportController = {
           $sort: { category: 1, priority: 1 }, // Sort by category and priority in ascending order
         },
       ]);
-      res
-        .status(200)
-        .json({
-          message: "meh",
-          issue: issue,
-          statusPercent: statusPercent,
-          statusPercentfilter: statusPercentfilter,
-          relation: relation,
-        });
+      res.status(200).json({
+        message: "meh",
+        issue: issue,
+        statusPercent: statusPercent,
+        statusPercentfilter: statusPercentfilter,
+        relation: relation,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "server error" });
