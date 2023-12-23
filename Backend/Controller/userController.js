@@ -155,6 +155,11 @@ const userController = {
       // Extract user data from the request body
       const { email, password, role, profile } = req.body;
 
+      if (!email || !password || !role || !profile || !profile.username) {
+        return res.status(404).json({ message: "invalid credentials" });
+      }
+      console.log(profile);
+
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -180,9 +185,10 @@ const userController = {
   // Route to assign a role to a user, accessible only to admins
   assignRole: async (req, res) => {
     try {
-      const { email, newRole } = req.body;
+      const { _id } = req.query;
+      const { newRole } = req.body;
       // Find the user by user ID
-      const user = await userModel.findOne({ email: email });
+      const user = await userModel.findById(_id);
 
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -246,6 +252,20 @@ const userController = {
       res.status(200).json({
         message: "Profile: ",
         user: { email: user.email, profile: user.profile },
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "server error" });
+    }
+  },
+  deleteUser: async (req, res) => {
+    try {
+      const { _id } = req.query;
+      const user = await userModel.findByIdAndDelete(_id);
+
+      res.status(200).json({
+        message: "user deleted successfully",
+        user: user,
       });
     } catch (error) {
       console.error(error);
