@@ -86,7 +86,11 @@ const userController = {
           sameSite: "none", //should be none for cross origin
         })
         .status(200)
-        .json({ message: "User logged in successfully", user: user, token: accessToken });
+        .json({
+          message: "User logged in successfully",
+          user: user,
+          token: accessToken,
+        });
     } catch (error) {
       console.error("Error in userController.login: ", error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -109,6 +113,39 @@ const userController = {
       }
     } catch (error) {
       console.error("Error in userController.logout: ", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+
+  updatePassword: async (req, res) => {
+    try {
+      const { _id } = req.query;
+      const { password, newPassword, confirmPassword } = req.body;
+      //find the user by email
+      const user = await userModel.findById(_id);
+      //if user not found
+      if (!user) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      //compare the password
+      const isMatch = await bcrypt.compare(password, user.password);
+      //if password not match
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      user.password = hashedPassword;
+      await user.save();
+      return res.status(200).json({
+        message: "password changed successfully",
+        user: user,
+      });
+    } catch (error) {
+      console.error("Error in userController.login: ", error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
@@ -199,7 +236,10 @@ const userController = {
       const { _id } = req.query;
       const user = await userModel.findById(_id);
 
-      res.status(200).json({ message: "Profile: ", user: {email: user.email, profile: user.profile} });
+      res.status(200).json({
+        message: "Profile: ",
+        user: { email: user.email, profile: user.profile },
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "server error" });
