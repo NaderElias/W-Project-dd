@@ -76,14 +76,14 @@ export default function AppNavBar() {
               </Button>
             </Nav.Item>
           )}
-          {userRole === "graph" && (
+          {userRole === "manager" && (
             <Nav.Item>
               <Button
                 as={Nav.Link}
                 href="/analytics"
                 className="navbar-buttons"
               >
-                Reports
+                Analytics
               </Button>
             </Nav.Item>
           )}
