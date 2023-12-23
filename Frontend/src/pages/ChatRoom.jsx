@@ -52,7 +52,14 @@ const ChatComponent = () => {
   }, []);
 
   const handleSendMessage = async () => {
+    const chatId = localStorage.getItem("chatId");
+    const senderId = localStorage.getItem("userId");
     socket.emit("chat message", `${userName}: ${message}`);
+    const response = await axios.put(
+      `${backend_url}/chats/add-message`,
+      { message: message, _id: chatId, senderId: senderId },
+      { withCredentials: true }
+    );
     setMessage("");
   };
 
