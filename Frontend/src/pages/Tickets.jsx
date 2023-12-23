@@ -16,6 +16,7 @@ function Tickets() {
 		subCategory: "",
 		priority: "",
 	});
+	let workFlow=useState([]);
 
 	useEffect(() => {
 		// Fetch tickets from backend API
@@ -68,9 +69,12 @@ function Tickets() {
 		}); // Reset form fields
 	};
 
-	const handleInputChange = (e) => {
+	const handleInputChange = async (e)  => {
 		const { name, value } = e.target;
 		setNewTicket((prevTicket) => ({ ...prevTicket, [name]: value }));
+		//get work flow
+		workFlow= await axios.get(`http://localhost:3000/api/automation/get-workflow`,{issueType:newTicket.category,subCategory:newTicket.subCategory},{withCredentials:true}).then((response) => setTickets(response.data.workFlow)).catch((error) => console.error("Error fetching workflow:", error));
+
 	};
 
 	const createNewTicket = async () => {
@@ -88,6 +92,23 @@ function Tickets() {
 
 		// Close the modal after creating the ticket
 	};
+
+	const subCategoriesByCategory = {
+		software: [
+		  'Operating system',
+		  'Application software',
+		  'Custom software',
+		  'Integration issues',
+		  
+		],
+		hardware: ['Desktops', 'Laptops', 'Printers', 'Servers'],
+		network: ['Networking equipment','Email issues',
+		'Internet connection problems',
+		'Website errors'],
+	  };
+	
+	  const subCategoriesOptions = subCategoriesByCategory[newTicket.category] || [];
+	
 
 	return (
 		<div className="Tickets">
@@ -117,42 +138,35 @@ function Tickets() {
 					<h2>Create New Ticket</h2>
 
 					<div className="form-group">
-						<label htmlFor="category">Category:</label>
-						<select
-							name="category"
-							value={newTicket.category}
-							onChange={handleInputChange}
-							className="select-dropdown"
-						>
-							<option value="software">Software</option>
-							<option value="hardware">Hardware</option>
-							<option value="network">Network</option>
-						</select>
-					</div>
+					<label htmlFor="category">Category:</label>
+        <select
+          name="category"
+          value={newTicket.category}
+          onChange={handleInputChange}
+          className="select-dropdown"
+        >
+          <option value="">Select Category</option>
+          <option value="software">Software</option>
+          <option value="hardware">Hardware</option>
+          <option value="network">Network</option>
+        </select>
+      </div>
 
-					<div className="form-group">
-						<label htmlFor="subCategory">Sub category:</label>
-						<select
-							name="subCategory"
-							value={newTicket.subCategory}
-							onChange={handleInputChange}
-							className="select-dropdown"
-						>
-							<option value="Desktops">Desktops</option>
-							<option value="Laptops">Laptops</option>
-							<option value="Printers">Printers</option>
-							<option value="Servers">Servers</option>
-							<option value="Networking equipment">Networking equipment</option>
-							<option value="Operating system">Operating system</option>
-							<option value="Application software">Application software</option>
-							<option value="Custom software">Custom software</option>
-							<option value="Integration issues">Integration issues</option>
-							<option value="Email issues">Email issues</option>
-							<option value="Internet connection problems">
-								Internet connection problems
-							</option>
-							<option value="Website errors">Website errors</option>
-						</select>
+      <div className="form-group">
+        <label htmlFor="subCategory">Sub category:</label>
+        <select
+          name="subCategory"
+          value={newTicket.subCategory}
+          onChange={handleInputChange}
+          className="select-dropdown"
+        >
+          <option value="">Select Subcategory</option>
+          {subCategoriesOptions.map((subCategory) => (
+            <option key={subCategory} value={subCategory}>
+              {subCategory}
+            </option>
+          ))}
+        </select>
 					</div>
 
 					<form>
@@ -197,10 +211,11 @@ function Tickets() {
 							<button
 								type="button"
 								onClick={createNewTicket}
-								className="create-button"
-							>
+								className={`create-button ${!(newTicket.category && newTicket.subCategory) ? 'disabled' : ''}`}
+								disabled={!newTicket.category || !newTicket.subCategory}
+								>
 								Create Ticket
-							</button>
+								</button>
 							<button
 								type="button"
 								onClick={closeModal}
