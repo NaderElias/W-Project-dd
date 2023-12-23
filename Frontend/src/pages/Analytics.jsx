@@ -38,7 +38,7 @@ const AnalyticsPage = () => {
       const value = analyticsData[key];
 
       // Output key and value to console
-      console.log(`${key}:`, value);
+    
 
       // If the value is an array or object, you can further iterate through its elements
       if (Array.isArray(value) || typeof value === "object") {
@@ -61,18 +61,12 @@ const AnalyticsPage = () => {
         }
 
         // Log each element of the array
-        for (const item of value) {
-          console.log(`${key} element:`, item);
-        }
+       
       }
     }
   }
 
   // Now you can use the variables: issue, statusPercent, statusPercentFilter, and relation
-  console.log("issue:", issue);
-  console.log("statusPercent:", statusPercent);
-  console.log("statusPercentFilter:", statusPercentFilter);
-  console.log("relation:", relation);
 
   return (
     <PieChart width={700} height={700}>
