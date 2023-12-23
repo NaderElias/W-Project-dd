@@ -174,18 +174,22 @@ const UserList = () => {
                   {user.profile.firstName} {user.profile.lastName}
                 </Card.Text>
                 <Card.Text>{`role: ${user.role}`}</Card.Text>
-                <Button
-                  variant="info"
-                  onClick={() => handleAssignRole(user._id)}
-                >
-                  Assign Role
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => handleDeleteUser(user._id)}
-                >
-                  Delete
-                </Button>
+                {user.role != "admin" && (
+                  <>
+                    <Button
+                      variant="info"
+                      onClick={() => handleAssignRole(user._id)}
+                    >
+                      Assign Role
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleDeleteUser(user._id)}
+                    >
+                      Delete
+                    </Button>
+                  </>
+                )}
 
                 {/* Dropdown for role selection */}
                 {selectedUser === user._id && showRoleDropdown && (
