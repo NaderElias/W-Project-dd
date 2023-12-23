@@ -45,6 +45,7 @@ const chatsController = {
     try {
       const { chatID, message } = req.body;
       const chat = await chatModel.findById(chatID);
+
       chat.chat.push(message);
       await chat.save();
       res.status(200).json({ message: "Message added successfully" });
