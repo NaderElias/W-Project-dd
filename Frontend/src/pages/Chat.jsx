@@ -10,15 +10,19 @@ import {
   Nav,
   Modal,
   Container,
+  Col,
+  Row,
 } from "react-bootstrap";
 import "../styles/RaijinNavBar.css";
+import ChatCard from "../components/ChatCard";
+
 let backend_url = "http://localhost:3000/api";
 
 export default function ChatsPage() {
   const navigate = useNavigate();
   const [notification, setNotification] = useState([]);
   const [show, setShow] = useState(false);
-
+  const [chats, setChats] = useState([]);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -38,8 +42,12 @@ export default function ChatsPage() {
     }
   };
   useEffect(() => {
-    if (localStorage.getItem("role") === "agent") {
-      getNotification();
+    if (localStorage.getItem("role") === "agent") getNotification();
+    if (
+      localStorage.getItem("role") === "manager" ||
+      localStorage.getItem("role") === "agent"
+    ) {
+      getChats();
     }
   }, []);
   const createNotification = async (agentId) => {
@@ -98,9 +106,34 @@ export default function ChatsPage() {
       console.error(error);
     }
   };
-  const handleNotificationClick = (chatId) => {
+  const getChats = async () => {
+    try {
+      if (localStorage.getItem("role") === "manager") {
+        const response = await axios.get(`${backend_url}/chats/get-chats`, {
+          withCredentials: true,
+        });
+        setChats(response.data.chat);
+        console.log(response.data.chat);
+        console.log(response.data);
+        return;
+      }
+      const agentId = localStorage.getItem("userId");
+      const response = await axios.get(
+        `${backend_url}/chats/get-chats?agentId=${agentId}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      setChats(response.data.chat);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleNotificationClick = (_id, chatId) => {
     localStorage.setItem("chatId", chatId);
     navigate("/chatroom");
+    handleDeleteNotification(_id);
   };
 
   return (
@@ -120,7 +153,7 @@ export default function ChatsPage() {
         </Navbar>
       )}
       <>
-        {localStorage.getItem("role") === "agent" && (
+        {localStorage.getItem("role") !== "user" && (
           <Navbar bg="light" expand="lg" className="navbar">
             <Container className="navbar-container">
               <Nav>
@@ -143,7 +176,19 @@ export default function ChatsPage() {
             </Container>
           </Navbar>
         )}
-
+        <Container fluid>
+          <Row>
+            {chats.map((Chat, index) => (
+              <Col key={index} lg={4} md={6} sm={12}>
+                <ChatCard
+                  userId={Chat.userID}
+                  agentId={Chat.agentId}
+                  chatId={Chat._id}
+                />
+              </Col>
+            ))}
+          </Row>
+        </Container>
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton className="modal-header">
             <Modal.Title>Notification</Modal.Title>
@@ -153,7 +198,9 @@ export default function ChatsPage() {
               <Card
                 key={index}
                 className="mb-2 raijin"
-                onClick={() => handleNotificationClick(notification.chatId)}
+                onClick={() =>
+                  handleNotificationClick(notification._id, notification.chatId)
+                }
               >
                 <Card.Body>
                   <Card.Text>{notification.message}</Card.Text>

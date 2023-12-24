@@ -13,11 +13,12 @@ let socket;
 const ChatComponent = () => {
   const [userName, setUserName] = useState("");
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([{ message: "" }]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   useEffect(() => {
     const uid = localStorage.getItem("userId");
+    const chatId = localStorage.getItem("chatId");
     axios
       .get(`${backend_url}/users/get-profile?_id=${uid}`, {
         withCredentials: true,
@@ -31,11 +32,21 @@ const ChatComponent = () => {
     //ffffffff
     socket = io("http://localhost:3000");
     socket.on("chat message", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages((prevMessages) => [...prevMessages, { message }]);
     });
+    axios
+      .get(`${backend_url}/chats/get-chats?_id=${chatId}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log(response.data);
+        setMessages(response.data.chat.chat);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     // Call the async function
-
     return () => {
       socket.disconnect();
     };
@@ -77,30 +88,36 @@ const ChatComponent = () => {
           <Col>
             {messages.map((message, index) => (
               <div key={index} className="message">
-                {message}
+                {message.message}
               </div>
             ))}
           </Col>
         </Row>
-        <Row className="input-container">
-          <Col>
-            <Form.Control
-              type="text"
-              value={message}
-              onChange={handleInputChange}
-              placeholder="Type your message..."
-            />
-          </Col>
-          <Col>
-            <Button variant="success" onClick={handleSendMessage}>
-              Send
-            </Button>
-            <Button variant="secondary" onClick={toggleEmojiPicker}>
-              🙂
-            </Button>
-            {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
-          </Col>
-        </Row>
+        {localStorage.getItem("role") !== "manager" ? (
+          <>
+            <Row className="input-container">
+              <Col>
+                <Form.Control
+                  type="text"
+                  value={message}
+                  onChange={handleInputChange}
+                  placeholder="Type your message..."
+                />
+              </Col>
+              <Col>
+                <Button variant="success" onClick={handleSendMessage}>
+                  Send
+                </Button>
+                <Button variant="secondary" onClick={toggleEmojiPicker}>
+                  🙂
+                </Button>
+                {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
+              </Col>
+            </Row>
+          </>
+        ) : (
+          <></>
+        )}
       </Container>
     </>
   );

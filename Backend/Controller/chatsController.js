@@ -23,7 +23,7 @@ const chatsController = {
         }
 
         const randomIndex = Math.floor(Math.random() * availableAgents.length);
-        selectedAgentID = availableAgents[randomIndex]._id;
+        selectedAgentID = availableAgents[randomIndex]._id.toString();
       }
 
       const newChat = new chatModel({
@@ -45,7 +45,6 @@ const chatsController = {
     try {
       const { _id, message, senderId } = req.body;
       const chat = await chatModel.findById(_id);
-      console.log(chat);
       chat.chat.push({ message, senderId });
       await chat.save();
       res.status(200).json({ message: "Message added successfully" });
@@ -54,13 +53,34 @@ const chatsController = {
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
-  getMessage: async (req, res) => {
+  getChats: async (req, res) => {
     try {
-      const { chatID } = req.query;
-      const chat = await chatModel.findById(chatID);
+      const { agentId, _id } = req.query;
+
+      if (agentId) {
+        const chat = await chatModel.find({ agentId });
+        if (!chat) {
+          return res.status(404).json({ message: "Chat not found" });
+        }
+        const messages = chat.chat;
+        return res.status(200).json({ chat });
+      }
+      if (_id) {
+        const chat = await chatModel.findById(_id);
+        if (!chat) {
+          return res.status(404).json({ message: "Chat not found" });
+        }
+        const messages = chat.chat;
+        return res.status(200).json({ chat });
+      }
+      const chat = await chatModel.find({});
+      if (!chat) {
+        return res.status(404).json({ message: "Chat not found" });
+      }
+      const messages = chat.chat;
       res.status(200).json({ chat });
     } catch (error) {
-      console.error("Error in chatsController.getMessage: ", error);
+      console.error("Error in chatsController.getChat: ", error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },

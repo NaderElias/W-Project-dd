@@ -86,7 +86,11 @@ const userController = {
           sameSite: "none", //should be none for cross origin
         })
         .status(200)
-        .json({ message: "User logged in successfully", user: user, token: accessToken });
+        .json({
+          message: "User logged in successfully",
+          user: user,
+          token: accessToken,
+        });
     } catch (error) {
       console.error("Error in userController.login: ", error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -198,8 +202,10 @@ const userController = {
       // Extract user data from the request body
       const { _id } = req.query;
       const user = await userModel.findById(_id);
-
-      res.status(200).json({ message: "Profile: ", user: {email: user.email, profile: user.profile} });
+      res.status(200).json({
+        message: "Profile: ",
+        user: { email: user.email, profile: user.profile },
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "server error" });
