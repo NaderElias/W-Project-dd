@@ -21,9 +21,10 @@ function Tickets() {
   useEffect(() => {
     // Fetch tickets from backend API
     if (localStorage.getItem("role") === "agent") {
+      console.log('legs');
       axios
         .get(
-          `http://localhost:3000/api/tickets/get-All-Tickets?userId=${localStorage.getItem(
+          `http://localhost:3000/api/tickets/get-All-Tickets?assignedAgentId=${localStorage.getItem(
             "userId"
           )}`,
           {
@@ -44,6 +45,7 @@ function Tickets() {
         )
         .then((response) => setTickets(response.data.tickets))
         .catch((error) => console.error("Error fetching tickets:", error));
+        
     } else {
       axios
         .get("http://localhost:3000/api/tickets/get-All-Tickets", {
@@ -146,9 +148,12 @@ function Tickets() {
           <p>No tickets available.</p>
         )}
       </div>
-      <button className="newTicketButton" onClick={openModal}>
+      {localStorage.getItem('role')==='user'?
+       <button className="newTicketButton" onClick={openModal}>
         Create New Ticket
       </button>
+      :null}
+     
 
       {/* Modal for creating a new ticket */}
 

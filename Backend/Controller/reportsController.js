@@ -12,7 +12,7 @@ const reportController = {
       const session = await sessionModel
         .findOne({ token: targetToken })
         .select("userID");
-      const managerId = session.userID;
+      const managerId = session.userID.toString();
       // Create a new report
       const newReport = new reportModel({
         managerId,

@@ -45,7 +45,7 @@ const ticketSchema = new mongoose.Schema({
 		required: true,
 	},
 	assignedAgentId: {
-		type: Object,
+		type: String,
 		
 	},
 	resolutionDetails: {

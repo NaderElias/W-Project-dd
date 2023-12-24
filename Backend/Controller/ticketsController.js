@@ -91,7 +91,7 @@ async function checkQ() {
 
       if (agentUser) {
         const agentTickets = await ticketsModel.find({
-          assignedAgentId: agentUser._id,
+          assignedAgentId: agentUser._id.toString(),
         });
 
         if (agentTickets.length < 5) {
@@ -99,7 +99,7 @@ async function checkQ() {
 
           await ticketsModel.updateOne(
             { _id: ticket._id },
-            { assignedAgentId: agentUser._id },
+            { assignedAgentId: agentUser._id.toString() },
             { status: "in progress" }
           );
           break;
@@ -126,7 +126,7 @@ const ticketController = {
     console.log("suc");
     return res.status(200).json({ message: "me" });
 
-    /*
+  /*
 		try {
 			// Delete all documents in the ticketsModel collection
 			const result = await ticketsModel.deleteMany({});
@@ -221,7 +221,7 @@ const ticketController = {
       //getting all reports and outputting them
       const query = req.query; 
       if(query.assignedAgentId){
-        const agentTickets= await ticketsModel.find({assignedAgentId:query.userId}).sort({createdAt:-1});
+        const agentTickets= await ticketsModel.find({assignedAgentId:query.assignedAgentId}).sort({createdAt:-1});
         return res.status(200).json({message:'agent tickets',tickets:agentTickets});
       }
       if(query.userId){ 
