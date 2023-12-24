@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
+import { Container, Form, Button, Col, Row } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+import AppNavBar from "../components/navbar";
+import Picker from "emoji-picker-react";
+import "../styles/RaijinNavBar.css";
 
 let backend_url = "http://localhost:3000/api";
 let socket;
@@ -9,7 +14,7 @@ const ChatComponent = () => {
   const [userName, setUserName] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [notifications, setNotifications] = useState([]);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   useEffect(() => {
     const uid = localStorage.getItem("userId");
@@ -29,29 +34,28 @@ const ChatComponent = () => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
-    socket.on("new notification", (notification) => {
-      setNotifications((prevNotifications) => [
-        ...prevNotifications,
-        notification.message,
-      ]);
-    });
-
-    const agentId = localStorage.getItem("agentId");
-
-    // Emit a 'new notification' event to the server
-    socket.emit("new notification", {
-      agentId: agentId,
-      message: "A new chat has been created",
-    });
-
     // Call the async function
 
     return () => {
       socket.disconnect();
     };
   }, []);
+  const handleInputChange = (e) => {
+    setMessage(e.target.value);
+  };
+  const handleEmojiClick = (emojiObject) => {
+    console.log(message);
+    setMessage(`${message}${emojiObject.emoji}`);
+  };
+
+  const toggleEmojiPicker = () => {
+    setShowEmojiPicker(!showEmojiPicker);
+  };
 
   const handleSendMessage = async () => {
+    if (!message.trim()) {
+      return;
+    }
     const chatId = localStorage.getItem("chatId");
     const senderId = localStorage.getItem("userId");
     socket.emit("chat message", `${userName}: ${message}`);
@@ -61,27 +65,44 @@ const ChatComponent = () => {
       { withCredentials: true }
     );
     setMessage("");
+    setShowEmojiPicker(false);
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button onClick={handleSendMessage}>Send</button>
-      <div>
-        {messages.map((message, index) => (
-          <p key={index}>{message}</p>
-        ))}
-      </div>
-      <div>
-        {notifications.map((notification, index) => (
-          <p key={index}>{notification}</p>
-        ))}
-      </div>
-    </div>
+    <>
+      {" "}
+      <AppNavBar />
+      <Container className="App">
+        <Row className="message-container">
+          <Col>
+            {messages.map((message, index) => (
+              <div key={index} className="message">
+                {message}
+              </div>
+            ))}
+          </Col>
+        </Row>
+        <Row className="input-container">
+          <Col>
+            <Form.Control
+              type="text"
+              value={message}
+              onChange={handleInputChange}
+              placeholder="Type your message..."
+            />
+          </Col>
+          <Col>
+            <Button variant="success" onClick={handleSendMessage}>
+              Send
+            </Button>
+            <Button variant="secondary" onClick={toggleEmojiPicker}>
+              🙂
+            </Button>
+            {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 };
 
