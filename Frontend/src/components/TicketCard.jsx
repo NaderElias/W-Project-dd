@@ -8,6 +8,7 @@ Modal.setAppElement("#root"); // Set the root element for the modal
 
 const TicketCard = ({ ticketKey, ticket }) => {
   const [newRating, setNewRating] = useState(1);
+  const [lec, setLec] = useState(1);
   const [isModalOpen, setModalOpen] = useState(false);
   const [newTicket, setNewTicket] = useState({
     _id:ticket._id,
@@ -18,11 +19,14 @@ const TicketCard = ({ ticketKey, ticket }) => {
 const mec = {_id:ticket._id,status:'closed'}
 
   const handleRatingChange = () => {
-    axios.put(`http://localhost:3000/api/tickets/update-Rating?_id=${ticketKey}`, { rating: newRating }, { withCredentials: true })
+    axios.put(`http://localhost:3000/api/tickets/update-Rating?_id=${ticket._id}`, { rating: newRating }, { withCredentials: true })
       .then(response => {
         console.log(response.data);
       })
       .catch(error => console.error('Error updating rating:', error));
+      console.log('trasj');
+      setLec(lec+1);
+      ticket.rating=newRating;
   };
 
   const handleClose = () => {
@@ -31,6 +35,7 @@ const mec = {_id:ticket._id,status:'closed'}
         console.log(response.data);
       })
       .catch(error => console.error('Error updating rating:', error));
+      setLec(lec+1);
   };
 
   const handleUpdateForm= () => {
@@ -50,6 +55,8 @@ const mec = {_id:ticket._id,status:'closed'}
       )
       .catch((error) => console.error("Error updating solution:", error));
     setModalOpen(false);
+    ticket=newTicket;
+    setLec(lec+1);
    //update ticket
    };
 
@@ -71,13 +78,13 @@ const mec = {_id:ticket._id,status:'closed'}
       <h3>{ticket.title}</h3>
       <p>{ticket.description}</p>
       <p>status:{ticket.status}</p>
-      {ticket.resolutionDetails && ticket.workflow && (
+      {ticket.resolutionDetails && ticket.workflow && ticket.status=='closed'&& (
   <div>
     <p>Resolution Details: {ticket.resolutionDetails}</p>
     <p>Workflow: {ticket.workflow}</p>
   </div>
 )}
-
+     
       <p className="rating">Rating: {ticket.rating}</p>
       {localStorage.getItem("role") === "user" ?  <div className="rating-section">
         <label htmlFor={`ratingDropdown-${ticket._id}`}>Select Rating:</label>

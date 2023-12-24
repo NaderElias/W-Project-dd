@@ -196,7 +196,7 @@ const ticketController = {
       });
       //check if the ticket already exists
       const existingTicket = await ticketsModel.findOne({
-        title: title,
+        title: title, 
         userId: userId,
         category: category,
         subCategory,

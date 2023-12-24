@@ -136,6 +136,7 @@ function Tickets() {
     setNewTicket((prevTicket) => ({ ...prevTicket, [name]: value }));
     //get work flow
   };
+  
   return (
     <div className="Tickets">
       <h1>Your Tickets</h1>
