@@ -14,7 +14,8 @@ router
 
 router
   .route("/get-chats")
-  .get(authorizationMiddleware(["manager", "agent"]), chatsController.getChats);
+  .get(authorizationMiddleware(["user", "manager", "agent"]), chatsController.getChats);
+  
 router
   .route("/create-notification")
   .post(

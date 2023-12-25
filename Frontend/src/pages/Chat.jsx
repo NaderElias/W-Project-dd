@@ -35,7 +35,6 @@ export default function ChatsPage() {
           withCredentials: true,
         }
       );
-      console.log(response.data);
       setNotification(response.data.notification);
     } catch (error) {
       console.error(error);
@@ -63,7 +62,6 @@ export default function ChatsPage() {
         },
         { withCredentials: true }
       );
-      console.log(response.data);
       localStorage.removeItem("agentId");
     } catch (error) {
       console.error("Error:", error);
@@ -79,7 +77,6 @@ export default function ChatsPage() {
         },
         { withCredentials: true }
       );
-      console.log(response.data);
       localStorage.setItem("agentId", response.data.newChat.agentId);
       localStorage.setItem("chatId", response.data.newChat._id);
       const agentId = localStorage.getItem("agentId");
@@ -100,7 +97,6 @@ export default function ChatsPage() {
           withCredentials: true,
         }
       );
-      console.log(response.data);
       getNotification();
     } catch (error) {
       console.error(error);
@@ -113,8 +109,6 @@ export default function ChatsPage() {
           withCredentials: true,
         });
         setChats(response.data.chat);
-        console.log(response.data.chat);
-        console.log(response.data);
         return;
       }
       const agentId = localStorage.getItem("userId");

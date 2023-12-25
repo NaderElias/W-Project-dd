@@ -43,9 +43,12 @@ const chatsController = {
   },
   addMessage: async (req, res) => {
     try {
-      const { _id, message, senderId } = req.body;
+      const { _id } = req.query;
+      const { message, senderId } = req.body;
       const chat = await chatModel.findById(_id);
-      chat.chat.push({ message, senderId });
+      const user = await userModel.findById(senderId);
+      const senderUsername = user.profile.username;
+      chat.chat.push({ message, senderId, senderUsername });
       await chat.save();
       res.status(200).json({ message: "Message added successfully" });
     } catch (error) {

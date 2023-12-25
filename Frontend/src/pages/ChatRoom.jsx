@@ -13,12 +13,13 @@ let socket;
 const ChatComponent = () => {
   const [userName, setUserName] = useState("");
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([{ message: "" }]);
+  const [messages, setMessages] = useState([{ message: "", senderUsername: "" }]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  let chatId = localStorage.getItem("chatId");
 
   useEffect(() => {
     const uid = localStorage.getItem("userId");
-    const chatId = localStorage.getItem("chatId");
+    
     axios
       .get(`${backend_url}/users/get-profile?_id=${uid}`, {
         withCredentials: true,
@@ -32,14 +33,16 @@ const ChatComponent = () => {
     //ffffffff
     socket = io("http://localhost:3000");
     socket.on("chat message", (message) => {
-      setMessages((prevMessages) => [...prevMessages, { message }]);
+      message = message.split(",")
+      if(message[2] == chatId.toString()){
+        setMessages((prevMessages) => [...prevMessages, { message: message[1], senderUsername: message[0] }]);
+      }
     });
     axios
       .get(`${backend_url}/chats/get-chats?_id=${chatId}`, {
         withCredentials: true,
       })
       .then((response) => {
-        console.log(response.data);
         setMessages(response.data.chat.chat);
       })
       .catch((error) => {
@@ -55,7 +58,6 @@ const ChatComponent = () => {
     setMessage(e.target.value);
   };
   const handleEmojiClick = (emojiObject) => {
-    console.log(message);
     setMessage(`${message}${emojiObject.emoji}`);
   };
 
@@ -69,10 +71,10 @@ const ChatComponent = () => {
     }
     const chatId = localStorage.getItem("chatId");
     const senderId = localStorage.getItem("userId");
-    socket.emit("chat message", `${userName}: ${message}`);
-    const response = await axios.put(
-      `${backend_url}/chats/add-message`,
-      { message: message, _id: chatId, senderId: senderId },
+    socket.emit("chat message", `${userName},${message},${chatId}`);
+    await axios.put(
+      `${backend_url}/chats/add-message?_id=${chatId}`,
+      { message: message, senderId: senderId },
       { withCredentials: true }
     );
     setMessage("");
@@ -88,7 +90,7 @@ const ChatComponent = () => {
           <Col>
             {messages.map((message, index) => (
               <div key={index} className="message">
-                {message.message}
+                {`${message.senderUsername}: ${message.message}`}
               </div>
             ))}
           </Col>
