@@ -74,9 +74,10 @@ const reportController = {
   updateReport: async (req, res) => {
     try {
       // Extract report data from the request body
-      const { ticketId, ticketStatus, resolutionTime, agentPerformance } =
+      const { _id } = req.query;
+      const { ticketStatus, resolutionTime, agentPerformance } =
         req.body;
-      const report = await reportModel.findOne({ ticketId: ticketId });
+      const report = await reportModel.findById(_id);
       // Update the report
       if (ticketStatus) {
         report.ticketStatus = ticketStatus;
@@ -152,7 +153,12 @@ const reportController = {
           $project: {
             _id: 0,
             status: "$_id",
-            percentage: { $multiply: [{ $divide: ["$count", total] }, 100] },
+            percentage: {
+              $round: [
+                { $multiply: [{ $divide: ["$count", total] }, 100] },
+                1, // 1 decimal place
+              ],
+            },
           },
         },
       ]);
