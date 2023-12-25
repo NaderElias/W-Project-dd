@@ -5,6 +5,9 @@ const NotificationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
+  chatId: {
+    type: mongoose.Schema.Types.ObjectId,
+  },
   message: {
     type: String,
     required: true,
