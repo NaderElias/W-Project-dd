@@ -8,7 +8,7 @@ const reportController = {
       // Extract report data from the request body
       const { ticketId, ticketStatus, resolutionTime, agentPerformance } =
         req.body;
-      const targetToken = req.cookies.accessToken;
+      const targetToken = req.cookies.token;
       const session = await sessionModel
         .findOne({ token: targetToken })
         .select("userID");

@@ -10,13 +10,23 @@ const TicketCard = ({ ticketKey, ticket }) => {
   const [newRating, setNewRating] = useState(1);
   const [lec, setLec] = useState(1);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [reporto, setReporto] = useState(false);
   const [newTicket, setNewTicket] = useState({
     _id:ticket._id,
     resolutionDetails: "",
     workflow: "",
     
   });
+
+  const [newReport, setNewReport] = useState({
+    ticketId:ticket._id,
+    ticketStatus:"closed",
+    resolutionTime: ticket.closedAt,
+    agentPerformance: "",
+    
+  });
 const mec = {_id:ticket._id,status:'closed'}
+
 
   const handleRatingChange = () => {
     axios.put(`http://localhost:3000/api/tickets/update-Rating?_id=${ticket._id}`, { rating: newRating }, { withCredentials: true })
@@ -41,6 +51,9 @@ const mec = {_id:ticket._id,status:'closed'}
   const handleUpdateForm= () => {
    setModalOpen(true);
   };
+  const reportTrue= () => {
+    setReporto(true);
+   };
 
   const handleUpdate= async () => {
     //here update sol
@@ -60,18 +73,78 @@ const mec = {_id:ticket._id,status:'closed'}
    //update ticket
    };
 
+
+   const handleReport= async () => {
+    //here update sol
+    setNewReport({ticketId:ticket._id,ticketStatus:'closed',resolutionTime: ticket.closedAt});
+    console.log(newReport);
+    const tickom = await axios
+      .post(
+        `http://localhost:3000/api/reports/create-Report`,
+        newReport,
+        { 
+          
+          withCredentials: true }
+      )
+      .catch((error) => console.error("Error createing Report:", error));
+    setReporto(false);
+    setLec(lec+1);
+    
+   //update ticket
+   };
+
+
+
    const closeModal = () => {
     setModalOpen(false);
     setNewTicket({
+      ticketId:ticket._id,
+    ticketStatus:"closed",
      resolutionDetails:"",
      workflow:"",
     }); // Reset form fields
+  };
+
+  const closeModalR = () => {
+    setReporto(false);
+    
+    setNewReport({
+      ticketId:ticket._id,
+    ticketStatus:"closed",
+     resolutionTime:"",
+     agentPerformance:"",
+    });
+    console.log(newReport.ticketId,newReport.ticketStatus);
+    
+    // Reset form fields
   };
 
   const handleInputChange = async (e) => {
     const { name, value } = e.target;
 
     setNewTicket((prevTicket) => ({ ...prevTicket, [name]: value }));}
+
+    const handleInputChangeR = (e) => {
+      /*
+      if(e.target.id=="resolutionTime"){
+        console.log(e.target.id);
+        console.log('time');
+        setNewReport({resolutionTime:e.target.value});
+      }  */
+      
+   
+      const { name, value } = e.target;
+    
+      setNewReport((prevReport) => ({
+        ...prevReport,
+        [name]: value
+      }));
+     
+  
+    };
+
+
+    
 
   return (
     <div className="ticket-card">
@@ -103,7 +176,7 @@ const mec = {_id:ticket._id,status:'closed'}
       </div>: null}
       {localStorage.getItem("role") === "agent"? 
       
-      <button onClick={handleUpdateForm} className="change-rating-button">
+      <button onClick={handleUpdateForm} className="change-rating-button" disabled={ticket.status=='closed'}>
       update ticket
     </button>
       
@@ -111,6 +184,14 @@ const mec = {_id:ticket._id,status:'closed'}
       {localStorage.getItem("role") === "agent" &&ticket.status!='closed' ? 
       <button onClick={handleClose} className="change-rating-button">
           close ticket
+        </button>
+      
+      : null}
+
+
+{localStorage.getItem("role") === "manager" &&ticket.status=='closed' ? 
+      <button onClick={reportTrue} className="change-rating-button">
+          Create Report
         </button>
       
       : null}
@@ -163,6 +244,52 @@ const mec = {_id:ticket._id,status:'closed'}
               <button
                 type="button"
                 onClick={closeModal}
+                className="cancel-button"
+              >
+                Cancel
+              </button>
+
+              </form>
+         </div>
+      </Modal>
+
+
+      <Modal
+        isOpen={reporto}
+        onRequestClose={closeModalR}
+        className="modal"
+        overlayClassName="overlay"
+      >
+        <div className="modal-content">
+          <h2>Create Report</h2>
+            <form>
+
+            <div className="form-group">
+              <label htmlFor="agentPerformance">Agent Performance:</label>
+              <textarea
+                id="agentPerformance"
+                name="agentPerformance"
+                value={newReport.agentPerformance}
+                onChange={handleInputChangeR}
+                
+              />
+            </div>
+
+            <button
+                type="button"
+                onClick={handleReport}
+                className={`create-button ${
+                  !(newReport.resolutionTime && newReport.agentPerformance)
+                    ? "disabled"
+                    : ""
+                }`}
+                disabled={!newReport.resolutionTime || !newReport.agentPerformance}
+              >
+                Create Report
+              </button>
+              <button
+                type="button"
+                onClick={closeModalR}
                 className="cancel-button"
               >
                 Cancel

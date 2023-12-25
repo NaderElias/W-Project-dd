@@ -3,11 +3,13 @@ import axios from "axios";
 import Modal from "react-modal";
 import "../styles/Tickets.css";
 import TicketCard from "../components/TicketCard";
+import AppNavBar from "../components/navbar";
 
 Modal.setAppElement("#root"); // Set the root element for the modal
 
 function Tickets() {
   const [tickets, setTickets] = useState([]);
+  const [op, setOp] = useState(1);
   const [isModalOpen, setModalOpen] = useState(false);
   const [newTicket, setNewTicket] = useState({
     title: "",
@@ -54,6 +56,7 @@ function Tickets() {
         .then((response) => setTickets(response.data.tickets))
         .catch((error) => console.error("Error fetching tickets:", error));
     }
+    
   }, []); // Empty dependency array ensures the effect runs once on mount
 
   const openModal = () => {
@@ -108,7 +111,7 @@ function Tickets() {
       .catch((error) => console.error("Error creating ticket:", error));
 
     closeModal();
-
+        setOp(op+1);
     // Close the modal after creating the ticket
   };
 
@@ -138,142 +141,143 @@ function Tickets() {
   };
   
   return (
-    <div className="Tickets">
-      <h1>Your Tickets</h1>
-      <div className="ticketContainer">
-        {tickets.length > 0 ? (
-          tickets.map((ticket) => (
-            <TicketCard key={ticket._id} ticket={ticket} />
-          ))
-        ) : (
-          <p>No tickets available.</p>
-        )}
-      </div>
-      {localStorage.getItem('role')==='user'?
-       <button className="newTicketButton" onClick={openModal}>
-        Create New Ticket
-      </button>
-      :null}
-     
+   <> <AppNavBar />
+   <div className="Tickets">
+     <h1>Your Tickets</h1>
+     <div className="ticketContainer">
+       {tickets.length > 0 ? (
+         tickets.map((ticket) => (
+           <TicketCard key={ticket._id} ticket={ticket} />
+         ))
+       ) : (
+         <p>No tickets available.</p>
+       )}
+     </div>
+     {localStorage.getItem('role')==='user'?
+      <button className="newTicketButton" onClick={openModal}>
+       Create New Ticket
+     </button>
+     :null}
+    
 
-      {/* Modal for creating a new ticket */}
+     {/* Modal for creating a new ticket */}
 
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        className="modal"
-        overlayClassName="overlay"
-      >
-        <div className="modal-content">
-          <h2>Create New Ticket</h2>
+     <Modal
+       isOpen={isModalOpen}
+       onRequestClose={closeModal}
+       className="modal"
+       overlayClassName="overlay"
+     >
+       <div className="modal-content">
+         <h2>Create New Ticket</h2>
 
-          <div className="form-group">
-            <label htmlFor="category">Category:</label>
-            <select
-              name="category"
-              value={newTicket.category}
-              onChange={handleInputChange}
-              className="select-dropdown"
-            >
-              <option value="">Select Category</option>
-              <option value="software">Software</option>
-              <option value="hardware">Hardware</option>
-              <option value="network">Network</option>
-            </select>
-          </div>
+         <div className="form-group">
+           <label htmlFor="category">Category:</label>
+           <select
+             name="category"
+             value={newTicket.category}
+             onChange={handleInputChange}
+             className="select-dropdown"
+           >
+             <option value="">Select Category</option>
+             <option value="software">Software</option>
+             <option value="hardware">Hardware</option>
+             <option value="network">Network</option>
+           </select>
+         </div>
 
-          <div className="form-group">
-            <label htmlFor="subCategory">Sub category:</label>
-            <select
-              name="subCategory"
-              value={newTicket.subCategory}
-              onChange={handleInputChange}
-              className="select-dropdown"
-            >
-              <option value="">Select Subcategory</option>
-              {subCategoriesOptions.map((subCategory) => (
-                <option key={subCategory} value={subCategory}>
-                  {subCategory}
-                </option>
-              ))}
-            </select>
-          </div>
+         <div className="form-group">
+           <label htmlFor="subCategory">Sub category:</label>
+           <select
+             name="subCategory"
+             value={newTicket.subCategory}
+             onChange={handleInputChange}
+             className="select-dropdown"
+           >
+             <option value="">Select Subcategory</option>
+             {subCategoriesOptions.map((subCategory) => (
+               <option key={subCategory} value={subCategory}>
+                 {subCategory}
+               </option>
+             ))}
+           </select>
+         </div>
 
-          <form>
-            <div className="form-group">
-              <label htmlFor="title">Title:</label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={newTicket.title}
-                onChange={handleInputChange}
-                className="input-field"
-              />
-            </div>
+         <form>
+           <div className="form-group">
+             <label htmlFor="title">Title:</label>
+             <input
+               type="text"
+               id="title"
+               name="title"
+               value={newTicket.title}
+               onChange={handleInputChange}
+               className="input-field"
+             />
+           </div>
 
-            <div className="form-group">
-              <label htmlFor="description">Description:</label>
-              <textarea
-                id="description"
-                name="description"
-                value={newTicket.description}
-                onChange={handleInputChange}
-                className="textarea-field"
-              />
-            </div>
+           <div className="form-group">
+             <label htmlFor="description">Description:</label>
+             <textarea
+               id="description"
+               name="description"
+               value={newTicket.description}
+               onChange={handleInputChange}
+               className="textarea-field"
+             />
+           </div>
 
-            <div className="form-group">
-              <label htmlFor="priority">Priority:</label>
-              <select
-                name="priority"
-                value={newTicket.priority}
-                onChange={handleInputChange}
-                className="select-dropdown"
-              >
-                <option value="high">High</option>
-                <option value="medium">Medium</option>
-                <option value="low">Low</option>
-              </select>
-            </div>
+           <div className="form-group">
+             <label htmlFor="priority">Priority:</label>
+             <select
+               name="priority"
+               value={newTicket.priority}
+               onChange={handleInputChange}
+               className="select-dropdown"
+             >
+               <option value="high">High</option>
+               <option value="medium">Medium</option>
+               <option value="low">Low</option>
+             </select>
+           </div>
 
-            <div className="button-group">
-              <button
-                type="button"
-                onClick={createNewTicket}
-                className={`create-button ${
-                  !(newTicket.category && newTicket.subCategory)
-                    ? "disabled"
-                    : ""
-                }`}
-                disabled={!newTicket.category || !newTicket.subCategory}
-              >
-                Create Ticket
-              </button>
-              <button
-                type="button"
-                onClick={closeModal}
-                className="cancel-button"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        className="workf"
-        overlayClassName="overlayf"
-      >
-        <div className="modal-content right-position">
-          <div>
-            <p>{workFlow}</p>
-          </div>
-        </div>
-      </Modal>
-    </div>
+           <div className="button-group">
+             <button
+               type="button"
+               onClick={createNewTicket}
+               className={`create-button ${
+                 !(newTicket.category && newTicket.subCategory)
+                   ? "disabled"
+                   : ""
+               }`}
+               disabled={!newTicket.category || !newTicket.subCategory}
+             >
+               Create Ticket
+             </button>
+             <button
+               type="button"
+               onClick={closeModal}
+               className="cancel-button"
+             >
+               Cancel
+             </button>
+           </div>
+         </form>
+       </div>
+     </Modal>
+     <Modal
+       isOpen={isModalOpen}
+       onRequestClose={closeModal}
+       className="workf"
+       overlayClassName="overlayf"
+     >
+       <div className="modal-content right-position">
+         <div>
+           <p>{workFlow}</p>
+         </div>
+       </div>
+     </Modal>
+   </div></>
   );
 }
 
