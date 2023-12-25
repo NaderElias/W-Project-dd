@@ -9,6 +9,10 @@ const reportSchema = mongoose.Schema({
         type: String,
         required: true
       },
+      ticketTitle: {
+        type: String,
+        required: true,
+      },
       ticketStatus: {
         type: String,
         enum: ["open", "in progress", "closed"],

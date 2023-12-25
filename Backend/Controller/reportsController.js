@@ -6,8 +6,8 @@ const reportController = {
   createReport: async (req, res) => {
     try {
       // Extract report data from the request body
-      const { ticketId, ticketStatus, resolutionTime, agentPerformance } =
-        req.body;
+      const { ticketId } = req.query;
+      const { ticketStatus, resolutionTime, agentPerformance } = req.body;
       const targetToken = req.cookies.token;
       const session = await sessionModel
         .findOne({ token: targetToken })
@@ -20,11 +20,14 @@ const reportController = {
 
       console.log(existingReport);
       if (existingReport) {
-        return res.status(404).json({ message: "report already exists" });
+        return res.status(400).json({ message: "report already exists" });
       }
+
+      const ticket = await ticketsModel.findById(ticketId);
       const newReport = new reportModel({
         managerId,
         ticketId,
+        ticketTitle: ticket.title,
         ticketStatus,
         resolutionTime,
         agentPerformance,
@@ -45,10 +48,10 @@ const reportController = {
   getAllReports: async (req, res) => {
     try {
       //getting all reports and outputting them
-      const query = req.query;
-      if (query.ticketId) {
+      const {ticketId} = req.query;
+      if (ticketId) {
         const particReport = await reportModel.findOne({
-          ticketId: query.ticketId,
+          ticketId,
         });
         if (!particReport) {
           return res
@@ -57,12 +60,22 @@ const reportController = {
         }
         return res.status(200).json({ reportsAnalytics: particReport });
       } else {
-        const allReports = await reportModel.find();
+        const allReports = await reportModel.find().sort({resolutionTime: -1});
         if (!allReports) {
           return res
             .status(404)
             .json({ message: "no reports in the database" });
         }
+
+        allReports.map(async (report) => {
+          const ticket = await ticketsModel.findById(report.ticketId)
+          if(ticket){
+            report = {
+              ...report,
+              ticketTitle: ticket.title
+            }
+          }
+        });
         return res.status(200).json({ reportsAnalytics: allReports });
       }
     } catch (error) {

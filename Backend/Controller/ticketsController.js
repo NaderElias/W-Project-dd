@@ -149,38 +149,6 @@ const ticketController = {
       let assignedAgentId = null;
       const workflow = "";
       let x = 0;
-  /*    
-      const prob = await assignA(category, priority);
-      console.log(prob);
-
-      const sortedAgents = Object.keys(prob).sort((a, b) => prob[b] - prob[a]);
-      for (const agentName of sortedAgents) {
-        console.log("happy", agentName);
-        const agentUser = await usersModel.findOne({
-          "profile.firstName": agentName,
-          role: "agent",
-        });
-        console.log("ma2", agentUser);
-        if (agentUser) {
-          const agentTickets = await ticketsModel.find({
-            assignedAgentId: agentUser._id,
-          });
-          console.log("agentickets", agentTickets);
-          if (agentTickets.length < 5) {
-            console.log(`Assigning ticket to Agent ${agentName}`);
-
-            assignedAgentId = agentUser._id;
-            statusTick = "in progress";
-            break;
-          }
-        }
-        x++;
-        if (x >= 2) {
-          x = 0;
-          break;
-        }
-      }
-*/
       const newTicket = new ticketsModel({
         userId, 
         title,
@@ -277,13 +245,15 @@ const ticketController = {
 
   updateTicket: async (req, res) => {
     try {
+      const {_id} = req.query
       bod = req.body;
       var mess = "ticket updated";
-      if (!bod._id) {
+      if (!_id) {
         return res.status(400).json({ message: "no ticket id provided" });
       }
       const { status, resolutionDetails, rating, workflow } = req.body;
-      const ticketUpdate = await ticketsModel.findById(bod._id);
+      const ticketUpdate = await ticketsModel.findById(_id);
+      console.log(ticketUpdate);
 
       if (status && status == "closed") {
         const closedAt = new Date();
@@ -305,7 +275,7 @@ const ticketController = {
 
       await ticketUpdate.save();
       //send email
-      const tick = await ticketsModel.findById(bod._id);
+      const tick = await ticketsModel.findById(_id);
       const us = await usersModel.findById(tick.userId);
       const em = us.email;
       const ema = emailService.sendUpdateEmail(em, mess);

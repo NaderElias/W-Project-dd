@@ -23,7 +23,6 @@ function Tickets() {
   useEffect(() => {
     // Fetch tickets from backend API
     if (localStorage.getItem("role") === "agent") {
-      console.log('legs');
       axios
         .get(
           `http://localhost:3000/api/tickets/get-All-Tickets?assignedAgentId=${localStorage.getItem(
@@ -72,6 +71,7 @@ function Tickets() {
       subCategory: "",
       priority: "",
     }); // Reset form fields
+    setWorkFlow("");
   };
 
   const getWorkflow = async () => {
@@ -82,7 +82,7 @@ function Tickets() {
 		withCredentials: true,
 	  }
 	)
-	.then((response) => {console.log(response);setWorkFlow(response.data.workFlow.workflow);})
+	.then((response) => {if(response.data.workFlow){setWorkFlow(response.data.workFlow.workflow);}})
 	.catch((error) => console.error("Error fetching workFlow:", error));
   };
 
@@ -90,7 +90,6 @@ function Tickets() {
     const { name, value } = e.target;
 
     setNewTicket((prevTicket) => ({ ...prevTicket, [name]: value }));
-	console.log(newTicket);
 	if(newTicket.category != "" && newTicket.subCategory != ""){
 		getWorkflow();
 	}
@@ -98,8 +97,6 @@ function Tickets() {
   };
 
   const createNewTicket = async () => {
-    console.log(newTicket);
-
     const tick = await axios
       .post(
         `http://localhost:3000/api/tickets/create-Ticket?userId=${localStorage.getItem(
@@ -272,6 +269,9 @@ function Tickets() {
        overlayClassName="overlayf"
      >
        <div className="modal-content right-position">
+        <div>
+          <h4>Possible Solution</h4>
+        </div>
          <div>
            <p>{workFlow}</p>
          </div>

@@ -27,6 +27,7 @@ const Reports = () => {
 					}
 				);
 				const { status, data } = response;
+        console.log(data);
 				if (status === 200) {
 					setReports(data.reportsAnalytics);
 				} else {
@@ -154,7 +155,7 @@ const Reports = () => {
 				<Table striped bordered hover>
 					<thead>
 						<tr>
-							<th>Ticket ID</th>
+							<th>Ticket Title</th>
 							<th>Ticket Status</th>
 							<th>Resolution Time</th>
 							<th>Agent Performance</th>
@@ -164,7 +165,7 @@ const Reports = () => {
 					<tbody>
 						{reports.map((report) => (
 							<tr key={report._id}>
-								<td>{report.ticketId}</td>
+								<td>{report.ticketTitle}</td>
 								<td>{report.ticketStatus}</td>
 								<td>{report.resolutionTime}</td>
 								<td>{report.agentPerformance}</td>
