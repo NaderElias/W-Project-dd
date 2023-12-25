@@ -14,6 +14,14 @@ const reportController = {
         .select("userID");
       const managerId = session.userID.toString();
       // Create a new report
+
+      //check if the report already exists
+      const existingReport = await reportModel.findOne({ ticketId: ticketId });
+
+      console.log(existingReport);
+      if (existingReport) {
+        return res.status(404).json({ message: "report already exists" });
+      }
       const newReport = new reportModel({
         managerId,
         ticketId,
@@ -21,11 +29,7 @@ const reportController = {
         resolutionTime,
         agentPerformance,
       });
-      //check if the report already exists
-      const existingReport = await reportModel.findOne({ ticketId: ticketId });
-      if (existingReport) {
-        return res.status(400).json({ message: "report already exists" });
-      }
+
       // Save the report to the database
       await newReport.save();
 
@@ -41,7 +45,8 @@ const reportController = {
   getAllReports: async (req, res) => {
     try {
       //getting all reports and outputting them
-      const query = req.query;      if (query.ticketId) {
+      const query = req.query;
+      if (query.ticketId) {
         const particReport = await reportModel.findOne({
           ticketId: query.ticketId,
         });
@@ -69,13 +74,20 @@ const reportController = {
   updateReport: async (req, res) => {
     try {
       // Extract report data from the request body
-      const { ticketId, ticketStatus, resolutionTime, agentPerformance } =
+      const { _id } = req.query;
+      const { ticketStatus, resolutionTime, agentPerformance } =
         req.body;
-      const report = await reportModel.findOne({ ticketId: ticketId });
+      const report = await reportModel.findById(_id);
       // Update the report
-      if(ticketStatus){report.ticketStatus = ticketStatus;}
-      if(resolutionTime){report.resolutionTime = resolutionTime;}
-      if(agentPerformance){report.agentPerformance = agentPerformance;}
+      if (ticketStatus) {
+        report.ticketStatus = ticketStatus;
+      }
+      if (resolutionTime) {
+        report.resolutionTime = resolutionTime;
+      }
+      if (agentPerformance) {
+        report.agentPerformance = agentPerformance;
+      }
       //check if the report exists
       if (!report.ticketId) {
         res.status(404).json({ message: "report does not exist" });
@@ -90,6 +102,25 @@ const reportController = {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "server error" });
+    }
+  },
+
+  deleteReport: async (req, res) => {
+    try {
+      const { ticketId } = req.body;
+
+      // Find the report by ticketId and remove it
+      const deletedReport = await reportModel.findOneAndRemove({ ticketId });
+
+      // Check if the report was found and deleted
+      if (!deletedReport) {
+        return res.status(404).json({ message: "Report not found" });
+      }
+
+      res.status(200).json({ message: "Report deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
     }
   },
 
@@ -122,7 +153,12 @@ const reportController = {
           $project: {
             _id: 0,
             status: "$_id",
-            percentage: { $multiply: [{ $divide: ["$count", total] }, 100] },
+            percentage: {
+              $round: [
+                { $multiply: [{ $divide: ["$count", total] }, 100] },
+                1, // 1 decimal place
+              ],
+            },
           },
         },
       ]);
@@ -175,15 +211,13 @@ const reportController = {
           $sort: { category: 1, priority: 1 }, // Sort by category and priority in ascending order
         },
       ]);
-      res
-        .status(200)
-        .json({
-          message: "meh",
-          issue: issue,
-          statusPercent: statusPercent,
-          statusPercentfilter: statusPercentfilter,
-          relation: relation,
-        });
+      res.status(200).json({
+        message: "meh",
+        issue: issue,
+        statusPercent: statusPercent,
+        statusPercentfilter: statusPercentfilter,
+        relation: relation,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "server error" });

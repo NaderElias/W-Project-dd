@@ -3,13 +3,8 @@ const brandModel = require("../Models/brandModel");
 const brandingController = {
   getCustomization: async (req, res) => {
     try {
-      const { brand } = req.body;
-      if (!brand) {
-        return res.status(400).json({ message: "Invalid credentials" });
-      }
-      const customization = await brandModel.find({ brand: brand });
-      console.log("customization|| " + customization);
-      res.status(200).json({ customization });
+      const customization = await brandModel.find({});
+      res.status(200).json({ customization: customization });
     } catch (error) {
       console.error("Error in brandingController.getCustomization: ", error);
       res.status(500).json({ message: "Internal Server Error" });

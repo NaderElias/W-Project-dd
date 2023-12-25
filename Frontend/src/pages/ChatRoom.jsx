@@ -1,32 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
+import axios from "axios";
 
 let backend_url = "http://localhost:3000/api";
 let socket;
 
 const ChatComponent = () => {
-  const [message, setMessage] = useState('');
+  const [userName, setUserName] = useState("");
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [notifications, setNotifications] = useState([]);
 
-
   useEffect(() => {
+    const uid = localStorage.getItem("userId");
+    axios
+      .get(`${backend_url}/users/get-profile?_id=${uid}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setUserName(response.data.user.profile.username);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    //ffffffff
     socket = io("http://localhost:3000");
     socket.on("chat message", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
     socket.on("new notification", (notification) => {
-      setNotifications((prevNotifications) => [...prevNotifications, notification.message]);
+      setNotifications((prevNotifications) => [
+        ...prevNotifications,
+        notification.message,
+      ]);
     });
 
-    const agentId = localStorage.getItem('agentId');
+    const agentId = localStorage.getItem("agentId");
 
     // Emit a 'new notification' event to the server
-    socket.emit('new notification', {
+    socket.emit("new notification", {
       agentId: agentId,
-      message: 'A new chat has been created'
+      message: "A new chat has been created",
     });
 
     // Call the async function
@@ -36,14 +51,18 @@ const ChatComponent = () => {
     };
   }, []);
 
-  const handleSendMessage = () => {
-    socket.emit("chat message", message);
-    setMessage('');
+  const handleSendMessage = async () => {
+    socket.emit("chat message", `${userName}: ${message}`);
+    setMessage("");
   };
 
   return (
     <div>
-      <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
+      <input
+        type="text"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
       <button onClick={handleSendMessage}>Send</button>
       <div>
         {messages.map((message, index) => (
