@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const reportSchema = mongoose.Schema({
     managerId: {
-        type: Object,
+        type: String,
         required: true
       },
       ticketId: {
-        type: Object,
+        type: String,
         required: true
       },
       ticketStatus: {

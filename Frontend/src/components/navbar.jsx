@@ -81,6 +81,24 @@ export default function AppNavBar() {
 					) : (
 						<></>
 					)}
+          {userRole === "manager" && (
+            <Nav.Item>
+              <Button as={Nav.Link} href="/reports" className="navbar-buttons">
+                Reports
+              </Button>
+            </Nav.Item>
+          )}
+          {userRole === "manager" && (
+            <Nav.Item>
+              <Button
+                as={Nav.Link}
+                href="/analytics"
+                className="navbar-buttons"
+              >
+                Analytics
+              </Button>
+            </Nav.Item>
+          )}
 				</Nav>
 				<Nav>
 				
