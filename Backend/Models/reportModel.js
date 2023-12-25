@@ -4,7 +4,7 @@ const reportSchema = mongoose.Schema({
     managerId: {
         type: String,
         required: true
-      },
+      }, 
       ticketId: {
         type: String,
         required: true
@@ -15,7 +15,7 @@ const reportSchema = mongoose.Schema({
         required: true
       },
       resolutionTime: {
-        type: String,
+        type: Date,
       },
       agentPerformance: {
         type: String,

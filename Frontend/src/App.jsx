@@ -14,23 +14,25 @@ import RegisterPage from "./pages/Register";
 import ChatPage from "./pages/Chat";
 import ChatRoom from "./pages/ChatRoom";
 import KnowledgeBasePage from "./pages/KnowlengeBasePage";
+import Tickets from "./pages/Tickets";
 import Reports from "./pages/Reports";
 import AnalyticsPage from "./pages/Analytics";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Homepage />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/userlist" element={<UserManagement />} />
-      <Route path="/branding" element={<CustomizationForm />} />
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/chat" element={<ChatPage />} />
-      <Route path="/chatroom" element={<ChatRoom />} />
-      <Route path="/knowledge-base" element={<KnowledgeBasePage />} />
-      <Route path="/reports" element={<Reports />} />
-      <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/" element={<Homepage />} />      
+          <Route path="/login" element={<Login  />} />
+          <Route path="/register" element={<RegisterPage  />} />
+          <Route path="/userlist" element={<UserManagement />} />
+          <Route path="/branding" element={<CustomizationForm />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/chatroom" element={<ChatRoom />} />
+          <Route path="/knowledge-base" element={<KnowledgeBasePage />} />
+          <Route path="/tickets" element={<Tickets />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
     </Routes>
   );
 }
