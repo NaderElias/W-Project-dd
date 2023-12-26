@@ -4,6 +4,7 @@ import { Container } from "react-bootstrap";
 import AppNavBar from "../components/navbar";
 import axios from "axios";
 
+
 const AnalyticsPage = () => {
 	const [analyticsData, setAnalyticsData] = useState(null);
 	useEffect(() => {

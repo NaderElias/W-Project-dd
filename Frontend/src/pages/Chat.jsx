@@ -14,6 +14,7 @@ import ChatCard from "../components/ChatCard";
 
 let backend_url = "http://localhost:3000/api";
 
+
 export default function ChatsPage() {
 	const navigate = useNavigate();
 	const [chats, setChats] = useState([]);
