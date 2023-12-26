@@ -160,7 +160,7 @@ const AnalyticsPage = () => {
 			<AppNavBar />
 			<div className="page-background">
 				<Container style={{ marginTop: 0, marginLeft: 0 }}>
-					<PieChart width={400} height={400} margin={50}>
+					<PieChart width={500} height={500} margin={50}>
 						<Pie
 							data={statusPercent}
 							dataKey="percentage"
@@ -180,8 +180,8 @@ const AnalyticsPage = () => {
 					</PieChart>
 				</Container>
 
-				<Container  style={{ marginTop:0, marginLeft: 1}}>
-					<PieChart width={400} height={400} margin={50}>
+				<Container  style={{ marginTop:0, marginLeft: 0}}>
+					<PieChart width={500} height={500} margin={50}>
 						<Pie
 							data={issue}
 							dataKey="count"
@@ -221,7 +221,7 @@ const AnalyticsPage = () => {
 			 <div>
      
 
-			 <ResponsiveContainer style={{ marginTop:-600, marginLeft: 350}}width="100%" aspect={3}>
+			 <ResponsiveContainer style={{ marginTop:-800, marginLeft: 350}}width="100%" aspect={3}>
     <LineChart data={relation} margin={{ right: 300 }}>
         <CartesianGrid />
         <XAxis dataKey="createdAt" interval={"preserveStartEnd"} />
