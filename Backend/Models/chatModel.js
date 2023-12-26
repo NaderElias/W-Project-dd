@@ -12,9 +12,6 @@ const messageSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  securityId: {
-    type: Object,
-  },
   timestamp: {
     type: Date,
     default: Date.now,
@@ -31,6 +28,16 @@ const chatSchema = mongoose.Schema({
   agentId: {
     type: Object,
     required: true,
+  },
+  encryption: {
+    encryptionKey: {
+      type: String,
+      required: true,
+    },
+    IV: {
+      type: String,
+      required: true,
+    },
   },
   chat: [messageSchema],
 });
