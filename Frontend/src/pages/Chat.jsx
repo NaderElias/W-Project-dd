@@ -143,10 +143,11 @@ export default function ChatsPage() {
 			<div class="page-background">
 				{localStorage.getItem("role") === "user" && (
 					<Button onClick={handleCreateChat} className="navbar-buttons">
-						Create
+						Start Chat
 					</Button>
 				)}
 				<Container fluid>
+					<p>.</p>
 					<Row>
 						{chats.map((Chat, index) => (
 							<Col key={index} lg={4} md={6} sm={12}>

@@ -1,24 +1,24 @@
 .button-container {
+    width: max-content;
     display: grid;
     justify-content: center;
     align-items: center;
     max-height: 650px;
-    gap: 10px; /* Adjust the space between buttons */
+    gap: 20px; /* Adjust the space between buttons */
     margin: 10px; /* This will create a gap from the edge of the screen */
-    padding: 10px; /* Padding inside the container */
+    padding: 20px; /* Padding inside the container */
     border: 2px solid transparent;
     background: linear-gradient(#212121, #212121) padding-box,
                 linear-gradient(145deg,#e81cff, #40c9ff) border-box;
     border-radius: 15px; /* Rounded corners for the container */
     box-sizing: border-box;
     transform-origin: right bottom;
-    flex-direction: column;
-    display: flex;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   
   .button {
-    width: calc(10vw - 10px); /* Width of each button, adjust as necessary */
-    height: calc(10vw - 10px); /* Height of each button, adjust as necessary */
+    width: 5rem; /* Width of each button, adjust as necessary */
+    height: 5rem; /* Height of each button, adjust as necessary */
     border-radius: 50%; /* Makes the button circular */
     cursor: pointer; /* Changes the cursor to a pointer on hover */
     aspect-ratio: 1;
@@ -154,6 +154,9 @@
     background: #f0f0f0; /* Example background color */
     /* Add more styling as needed */
 }
+
+
+
 
 
   

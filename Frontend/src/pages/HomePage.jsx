@@ -59,7 +59,7 @@ export default function HomePage() {
 		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
 			<div className="page-background">
-				<h1 className = "txt" style={{ textAlign: "center", margin: "30px"}}>
+				<h1 className = "txt" style={{ textAlign: "center"}}>
 					Welcome {userName}
 				</h1>
 			</div>

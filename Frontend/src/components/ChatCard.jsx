@@ -50,7 +50,7 @@ const ChatCard = ({ userId, agentId, chatId }) => {
   }, [userId, agentId]);
 
   return (
-    <Card>
+    <Card className={`card ${localStorage.getItem("theme-color")}`}>
       <Card.Body>
         <Card.Title>User and Agent Details</Card.Title>
         {userData && (

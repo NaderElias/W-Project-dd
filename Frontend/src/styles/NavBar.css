@@ -1,6 +1,17 @@
 /* AppNavBar.css */
 
 .navbar-buttons {
-    margin-right: 8px;
-    margin: 1px;
-  }
+  margin-right: 8px;
+  margin: 1px;
+}
+.notification{
+  border-radius: 15px; /* Adjust this value to increase or decrease the roundness */
+  background-color: #f2f2f2; /* Background color of the box */
+  border: 1px solid #dcdcdc; /* Border color */
+  padding: 20px; /* Space inside the box */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: crosshair;
+}
+.navbar {
+  position: sticky;
+}

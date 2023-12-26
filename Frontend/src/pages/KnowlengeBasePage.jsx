@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Container, Form, Button } from "react-bootstrap";
+import { Accordion, Container, Form } from "react-bootstrap";
+import { Collapse, ConfigProvider, Button } from 'antd';
 import AppNavBar from "../components/navbar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -31,7 +32,7 @@ export default function FAQPage() {
 				}
 			}
 
-			if(localStorage.getItem("role") === "manager" || localStorage.getItem("role") === "agent"){
+			if (localStorage.getItem("role") === "manager" || localStorage.getItem("role") === "agent") {
 				navigate("/")
 			}
 		};
@@ -54,11 +55,22 @@ export default function FAQPage() {
 		setFilteredFaqs(filtered);
 	};
 
+	let items = []; // This will hold the transformed FAQs
+
+	filteredFaqs.forEach((faq) => {
+		items.push({
+			key: faq.id, // Use a unique identifier from your faq if available
+			label: faq.title,
+			children: <p>{faq.content}</p>,
+		});
+	});
+
+
 	return (
 		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
 			<div class="page-background">
-				<Container className="mt-5">
+				<Container >
 					<h2 className="text-center mb-4 txt">Frequently Asked Questions</h2>
 
 					{/* Search input and button */}
@@ -76,12 +88,18 @@ export default function FAQPage() {
 					</Form>
 
 					{/* FAQs list */}
-					{filteredFaqs.map((faq, index) => (
-						<div key={index} className="mb-4">
-							<h4>{faq.title}</h4>
-							<p>{faq.content}</p>
-						</div>
-					))}
+					<ConfigProvider
+						theme={{
+							components: {
+								Collapse: {
+									headerBg: '#F3F3F3'
+								},
+							},
+						}}
+					>
+					<Collapse size="large" accordion items={items} />
+					</ConfigProvider>
+
 
 					{/* Add a back-to-top button */}
 					<Button

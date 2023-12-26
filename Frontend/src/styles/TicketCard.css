@@ -1,12 +1,16 @@
 /* src/components/TicketCard.css */
-.ticket-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
+/* .ticket-card {
+    border-radius: 10px;
     margin: 20px;
+    min-width: 402px;
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(247, 0, 0, 0.1);
     transition: box-shadow 0.3s ease-in-out;
   }
+  .ticket-card.theme-black {
+    background-color: #343434;
+  }
+  
   
   .ticket-card:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -16,6 +20,7 @@
     display: flex;
     align-items: center;
     margin-top: 10px;
+    justify-content: space-between;
   }
   
   label {
@@ -29,12 +34,162 @@
   .change-rating-button {
     background-color: #4CAF50;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px;
     padding: 8px 16px;
     cursor: pointer;
+    font-size: 0.9rem;
   }
   
   .change-rating-button:hover {
     background-color: #45a049;
   }
+  .card {
+  width: 320px;
+  height: 350px;
+  padding: 20px;
+  color: white;
+  background: linear-gradient(#212121, #212121) padding-box,
+              linear-gradient(145deg, transparent 35%,#e81cff, #40c9ff) border-box;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transform-origin: right bottom;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.card .main-content {
+  flex: 1;
+}
+
+.card .header span:first-child {
+  font-weight: 600;
+  color: #717171;
+  margin-right: 4px;
+}
+
+.card .heading {
+  font-size: 24px;
+  margin: 24px 0 16px;
+  font-weight: 600;
+}
+
+.card .categories {
+  display: flex;
+  gap: 8px;
+}
+
+.card .categories span {
+  background-color: #e81cff;
+  padding: 4px 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  border-radius: 50em;
+}
+
+.card .footer {
+  font-weight: 600;
+  color: #717171;
+  margin-right: 4px;
+}
+
+.card:hover {
+  rotate: 8deg;
+} */
+.card {
+  width: max-content;
+  min-width: 402px;
+  max-width: 700px;
+  height: max-content;
+  min-height: 562px;
+  max-height: 562px;
+  padding: 20px;
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  transform-origin: right bottom;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+  margin-right: 20px;
+  margin-left: 20px;
+  margin-bottom: 40px;
+}
+.card.theme-blue{
+background: #f8f9fa;
+box-shadow:  30px 30px 61px #000000,
+             -30px -30px 61px #ffffff;
+color: #212121;
+}
+.card.theme-black{
+  background: linear-gradient(#212121, #212121) padding-box,
+              linear-gradient(145deg, transparent 35%,#e81cff, #40c9ff) border-box;
+}
+.card.theme-grey{
+  background: linear-gradient(#212121, #212121) padding-box;
+  box-shadow:  5px 5px 10px #1f1f1f,
+             -5px -5px 10px #232323;
+  border:none;
+              
+}
+
+.card .main-content {
+  flex: 1;
+}
+
+.card .header span {
+  font-weight: 600;
+  color: #717171;
+  margin-right: 4px;
+}
+
+.card .heading {
+  font-size: 2.3rem;
+  margin: 24px 0 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.card .categories {
+  display: flex;
+  gap: 8px;
+}
+
+.card .categories span {
+  background-color: #E3E3E3;
+  color: #1f1f1f;
+  padding: 4px 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  border-radius: 50em;
+}
+
+
+.card .footer {
+  font-weight: 600;
+  color: #717171;
+  margin-right: 4px;
+}
+
+.card:hover {
+  scale: 1.05;
+}
+.change-rating-button{
+  align-items: center !important;
+}
+.disableHover:hover{
+  scale:1; 
+  cursor:default;
+}
+
+
+
+
+
+
+
   

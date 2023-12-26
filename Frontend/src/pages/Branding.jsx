@@ -119,6 +119,7 @@ const CustomizationForm = () => {
 									}}
 									onClick={() => handleClick(brand)}
 								/>
+								
 							);
 						})}
 				</div>
