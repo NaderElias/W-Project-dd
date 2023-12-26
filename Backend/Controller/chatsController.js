@@ -1,6 +1,7 @@
 const chatModel = require("../Models/chatModel");
 const userModel = require("../Models/userModel");
 const notificationModel = require("../Models/notificationModel");
+const nodemailer = require("nodemailer");
 const chatsController = {
   createChat: async (req, res) => {
     try {
@@ -89,34 +90,42 @@ const chatsController = {
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
-  getNotification: async (req, res) => {
+  sendEmail: async (req, res) => {
     try {
-      const { agentId } = req.query;
-      const notification = await notificationModel.find({
+      const { agentId, message } = req.body;
+      const notification = await notificationModel.findOne({
         agentId: agentId,
+        message: message,
       });
-      if (!notification) {
-        return res.status(400).json({ message: "No notification found" });
+      const getemail = await userModel.findById(agentId).select("email");
+
+      if (notification) {
+        let transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: "Manchekhalil69@gmail.com", // Replace with your email
+            pass: "Manche2002@", // Replace with your email password
+          },
+        });
+
+        // Define the email options
+        let mailOptions = {
+          from: "manchekhalil69@gmail.com", // Replace with your email
+          to: getemail, // Replace with the recipient's email
+          subject: "Test Email",
+          text: "Hello, this is a test email sent from itachi!",
+        };
+
+        // Send the email
+        let info = transporter.sendMail(mailOptions);
+
+        console.log("Email sent: " + info.res);
       }
-      res.status(200).json({ notification: notification });
     } catch (error) {
-      console.error("Error in chatsController.getNotification: ", error);
-      res.status(500).json({ message: "Internal Server Error" });
-    }
-  },
-  deleteNotification: async (req, res) => {
-    try {
-      const { _id } = req.query;
-      const notification = await notificationModel.findById(_id);
-      if (!notification) {
-        return res.status(400).json({ message: "No notification found" });
-      }
-      await notificationModel.findByIdAndDelete(_id);
-      res.status(200).json({ message: "Notification deleted successfully" });
-    } catch (error) {
-      console.error("Error in chatsController.deleteNotification: ", error);
+      console.error("Error in chatsController.createNotification: ", error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
 };
+
 module.exports = chatsController;

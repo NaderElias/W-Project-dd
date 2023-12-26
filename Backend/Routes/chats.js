@@ -24,15 +24,18 @@ router
     authorizationMiddleware(["agent", "user", "manager"]),
     chatsController.createNotification
   );
-
 router
-  .route("/get-notification")
-  .get(authorizationMiddleware(["agent"]), chatsController.getNotification);
+  .route("/send-Email")
+  .post(authorizationMiddleware(["user"]), chatsController.sendEmail);
 
-router
-  .route("/delete-notification")
-  .delete(
-    authorizationMiddleware(["agent"]),
-    chatsController.deleteNotification
-  );
+// router
+//   .route("/get-notification")
+//   .get(authorizationMiddleware(["agent"]), chatsController.getNotification);
+
+// router
+//   .route("/delete-notification")
+//   .delete(
+//     authorizationMiddleware(["agent"]),
+//     chatsController.deleteNotification
+//   );
 module.exports = router;
