@@ -48,7 +48,7 @@ const reportController = {
   getAllReports: async (req, res) => {
     try {
       //getting all reports and outputting them
-      const {ticketId} = req.query;
+      const { ticketId } = req.query;
       if (ticketId) {
         const particReport = await reportModel.findOne({
           ticketId,
@@ -60,7 +60,9 @@ const reportController = {
         }
         return res.status(200).json({ reportsAnalytics: particReport });
       } else {
-        const allReports = await reportModel.find().sort({resolutionTime: -1});
+        const allReports = await reportModel
+          .find()
+          .sort({ resolutionTime: -1 });
         if (!allReports) {
           return res
             .status(404)
@@ -68,12 +70,12 @@ const reportController = {
         }
 
         allReports.map(async (report) => {
-          const ticket = await ticketsModel.findById(report.ticketId)
-          if(ticket){
+          const ticket = await ticketsModel.findById(report.ticketId);
+          if (ticket) {
             report = {
               ...report,
-              ticketTitle: ticket.title
-            }
+              ticketTitle: ticket.title,
+            };
           }
         });
         return res.status(200).json({ reportsAnalytics: allReports });
@@ -88,8 +90,7 @@ const reportController = {
     try {
       // Extract report data from the request body
       const { _id } = req.query;
-      const { ticketStatus, resolutionTime, agentPerformance } =
-        req.body;
+      const { ticketStatus, resolutionTime, agentPerformance } = req.body;
       const report = await reportModel.findById(_id);
       // Update the report
       if (ticketStatus) {
