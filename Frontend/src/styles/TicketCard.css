@@ -1,0 +1,49 @@
+/* src/components/TicketCard.css */
+.ticket-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  
+  .ticket-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  h3 {
+    color: #333;
+  }
+  
+  p {
+    color: #555;
+  }
+  
+  .rating-section {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  label {
+    margin-right: 10px;
+  }
+  
+  select {
+    margin-right: 10px;
+  }
+  
+  .change-rating-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+  
+  .change-rating-button:hover {
+    background-color: #45a049;
+  }
+  

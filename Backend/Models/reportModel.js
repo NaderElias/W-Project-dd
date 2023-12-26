@@ -2,12 +2,16 @@ const mongoose = require("mongoose");
 
 const reportSchema = mongoose.Schema({
     managerId: {
-        type: Object,
+        type: String,
+        required: true
+      }, 
+      ticketId: {
+        type: String,
         required: true
       },
-      ticketId: {
-        type: Object,
-        required: true
+      ticketTitle: {
+        type: String,
+        required: true,
       },
       ticketStatus: {
         type: String,
@@ -15,7 +19,7 @@ const reportSchema = mongoose.Schema({
         required: true
       },
       resolutionTime: {
-        type: String,
+        type: Date,
       },
       agentPerformance: {
         type: String,

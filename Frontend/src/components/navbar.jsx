@@ -132,6 +132,33 @@ export default function AppNavBar() {
 						) : (
 							<></>
 						)}
+            {localStorage.getItem("role") == "admin" ?(
+               <></>
+              ): (
+               <Nav.Item>
+                 <Button as={Nav.Link} href="/tickets" className="navbar-buttons">
+                    Tickets
+                  </Button>
+                </Nav.Item>
+ )  }
+{localStorage.getItem("role") === "manager" && (
+    <Nav.Item>
+        <Button as={Nav.Link} href="/reports" className="navbar-buttons">
+            Reports
+        </Button>
+    </Nav.Item>
+)}
+{localStorage.getItem("role") === "manager" && (
+    <Nav.Item>
+        <Button
+            as={Nav.Link}
+            href="/analytics"
+            className="navbar-buttons"
+        >
+            Analytics
+        </Button>
+    </Nav.Item>
+)}
 						{localStorage.getItem("role") == "user" ? (
 							<Nav.Item>
 								<Button

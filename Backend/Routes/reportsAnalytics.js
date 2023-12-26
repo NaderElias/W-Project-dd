@@ -10,6 +10,11 @@ const reportController = require('../Controller/reportsController');
 router
   .route('/create-Report')
   .post(authorizationMiddleware(['manager']), reportController.createReport);
+
+  router
+  .route('/delete-Report')
+  .delete(authorizationMiddleware(['manager']), reportController.deleteReport);
+
  
   router
   .route('/get-All-Reports')

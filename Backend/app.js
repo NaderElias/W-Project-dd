@@ -110,7 +110,8 @@ function backupMongoDB() {
 cron.schedule("0 0 * * *", () => {
   backupMongoDB();
 });
-cron.schedule("0 */6 * * *", () => {
+cron.schedule("* */6 * * *", () => {
+  console.log("assigning tickets");
   checkQ();
 });
 

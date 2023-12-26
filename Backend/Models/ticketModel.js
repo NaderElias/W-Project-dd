@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const ticketSchema = new mongoose.Schema({
 	userId: {
-		type: Object,
+		type: String,
 		required: true,
 	},
 	title: {
@@ -45,7 +45,7 @@ const ticketSchema = new mongoose.Schema({
 		required: true,
 	},
 	assignedAgentId: {
-		type: Object,
+		type: String,
 		
 	},
 	resolutionDetails: {
