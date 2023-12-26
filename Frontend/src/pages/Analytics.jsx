@@ -1,4 +1,5 @@
-import { PieChart, Pie, Cell, Legend } from "recharts";
+import { PieChart, Pie, Cell,Legend,Tooltip,Layer,LineChart, Line, XAxis, YAxis, CartesianGrid,Bar,BarChart,ResponsiveContainer, ScatterChart,
+	Scatter, } from "recharts";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "react-bootstrap";
@@ -12,7 +13,7 @@ const AnalyticsPage = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await axios.get(
+				 const response = await axios.get(
 					"http://localhost:3000/api/reports/get-Analytics",
 					{ withCredentials: true }
 				);
@@ -38,7 +39,7 @@ const AnalyticsPage = () => {
 		{ name: "Geek-i-knack", students: 200 },
 		{ name: "Geek-o-mania", students: 1000 },
 	];
-	const colors = ["#36A2EB", "#FFCE56", "#FF6384"]; // Customize colors as needed
+	const colors = ['#FF5733', '#33FF57', '#5733FF', '#FFD700', '#00CED1', '#FF6347', '#8A2BE2'];; // Customize colors as needed
 
 	let issue;
 	let statusPercent;
@@ -78,17 +79,93 @@ const AnalyticsPage = () => {
 
 	// Now you can use the variables: issue, statusPercent, statusPercentFilter, and relation
 
+	const oioi = [
+		{ name: 'oioi 1', students: 50 },
+		{ name: 'oioi 2', students: 30 },
+		{ name: 'oioi 3', students: 20 },
+	  ];
+
+	  const blat=[{
+		"status": "open",
+		"category": "hardware",
+		"percentage": 40
+	  }];
+
+	
+
+
+	  const hol = [
+		{
+		  "status": "open",
+		  "category": "hardware",
+		  "priority": "low",
+		  "percentage": 5
+		},
+		{
+		  "status": "open",
+		  "category": "hardware",
+		  "priority": "medium",
+		  "percentage": 35
+		},
+		{
+		  "status": "in progress",
+		  "category": "network",
+		  "priority": "low",
+		  "percentage": 20
+		},
+		{
+		  "status": "in progress",
+		  "category": "network",
+		  "priority": "medium",
+		  "percentage": 15
+		},
+		{
+		  "status": "closed",
+		  "category": "software",
+		  "priority": "high",
+		  "percentage": 5
+		},
+		{
+		  "status": "closed",
+		  "category": "software",
+		  "priority": "low",
+		  "percentage": 15
+		},
+		{
+		  "status": "closed",
+		  "category": "software",
+		  "priority": "medium",
+		  "percentage": 5
+		}
+	  ];
+	  const relationR= [
+		{ "count": 6, "createdAt": "12-25", "percentage": 100 },
+		{ "count": 8, "createdAt": "12-26", "percentage": 0 },
+		{ "count": 12, "createdAt": "12-27", "percentage": 0 },
+		{ "count": 5, "createdAt": "12-28", "percentage": 0 },
+		{ "count": 10, "createdAt": "12-29", "percentage": 0 },
+		{ "count": 15, "createdAt": "12-30", "percentage": 0 },
+		{ "count": 7, "createdAt": "12-31", "percentage": 0 },
+		{ "count": 9, "createdAt": "01-01", "percentage": 0 },
+		{ "count": 11, "createdAt": "01-02", "percentage": 0 },
+		{ "count": 14, "createdAt": "01-03", "percentage": 0 }
+		// Add more entries as needed
+	  ]
+
+	  
+	  console.log(relation);
+
 	return (
 		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
 			<div className="page-background">
-				<Container>
-					<PieChart width={700} height={700} margin={50}>
+				<Container style={{ marginTop: 0, marginLeft: 0 }}>
+					<PieChart width={400} height={400} margin={50}>
 						<Pie
 							data={statusPercent}
 							dataKey="percentage"
 							nameKey="status"
-							outerRadius={250}
+							outerRadius={175}
 							fill="#8884d8"
 							label
 						>
@@ -102,7 +179,73 @@ const AnalyticsPage = () => {
 						<Legend />
 					</PieChart>
 				</Container>
-			</div>
+
+				<Container  style={{ marginTop:0, marginLeft: 1}}>
+					<PieChart width={400} height={400} margin={50}>
+						<Pie
+							data={issue}
+							dataKey="count"
+							nameKey="_id"
+							outerRadius={175}
+							fill="#8884d8"
+							label
+						>
+							{data.map((entry, index) => (
+								<Cell
+									key={`cell-${index}`}
+									fill={colors[index % colors.length]}
+								/>
+							))}
+						</Pie>
+						<Legend />
+					</PieChart>
+				</Container>
+
+
+				{/*                      */ }
+
+				<div
+            style={{
+                textAlign: "center",
+                margin: "auto 10%",
+            }}
+        >
+            {/*<h1 style={{ color: "green" }}>
+                GeeksforGeeks
+            </h1>
+            <h3>
+                React JS example for donut chart using
+                Recharts
+            </h3>*/ }
+             
+			 <div>
+     
+
+			 <ResponsiveContainer style={{ marginTop:-600, marginLeft: 350}}width="100%" aspect={3}>
+    <LineChart data={relation} margin={{ right: 300 }}>
+        <CartesianGrid />
+        <XAxis dataKey="createdAt" interval={"preserveStartEnd"} />
+        <YAxis dataKey="count" />
+        <Legend />
+        <Tooltip />
+        <Line
+            dataKey="count" 
+            stroke="red"
+            activeDot={{ r: 8 }}
+        />
+        
+    </LineChart>
+</ResponsiveContainer>
+
+      
+      
+    </div>
+
+
+			 
+        </div>
+
+				</div>
 		</div>
 	);
 };
