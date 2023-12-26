@@ -41,6 +41,25 @@
     color: #fff; /* White text on buttons */
     border: 1px solid transparent;
   }
+  .test.theme-bodda {
+    .page-background{
+      background-image: url('../assets/art.jpg');
+      background-size:contain;
+      background-position:center; 
+    background-color: #1e1e1e; /* Black background */
+    color: #fff; /* White text */
+    }
+    .txt{
+        font-style:bold;
+        color: #ddd;
+    }
+  }
+  .test.theme-bodda button,
+  .test.theme-bodda .button {
+    background: linear-gradient(#4e4e4e, #1e1e1e); /* Dark grey gradient for buttons */
+    color: #fff; /* White text on buttons */
+    border: 1px solid transparent;
+  }
   
   /* Theme White */
   .test.theme-grey {
@@ -154,7 +173,6 @@
     background: #f0f0f0; /* Example background color */
     /* Add more styling as needed */
 }
-
 
 
 

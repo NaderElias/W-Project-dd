@@ -151,6 +151,7 @@ const CustomizationForm = () => {
 								<option value="theme-blue">Blue</option>
 								<option value="theme-black">Black</option>
 								<option value="theme-grey">Grey</option>
+								<option value="theme-bodda">جاك الموت يا تارك الصلاه</option>
 							</Form.Control>
 						</Form.Group>
 						<Form.Group controlId="primaryColor">
