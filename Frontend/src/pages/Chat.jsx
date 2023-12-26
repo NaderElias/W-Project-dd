@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../styles/Brands.css";
 
-import {
-	Button,
-	Container,
-	Col,
-	Row,
-} from "react-bootstrap";
+import { Button, Container, Col, Row } from "react-bootstrap";
 import AppNavBar from "../components/navbar";
 import "../styles/RaijinNavBar.css";
 import ChatCard from "../components/ChatCard";
@@ -122,27 +118,28 @@ export default function ChatsPage() {
 	};
 
 	return (
-		<>
+		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
-			{localStorage.getItem("role") === "user" && (
-				<Button onClick={handleCreateChat} className="navbar-buttons">
-					Create
-				</Button>
-			)}
-			<Container fluid>
-				<Row>
-					{chats.map((Chat, index) => (
-						<Col key={index} lg={4} md={6} sm={12}>
-							<ChatCard
-								userId={Chat.userID}
-								agentId={Chat.agentId}
-								chatId={Chat._id}
-							/>
-						</Col>
-					))}
-				</Row>
-			</Container>
-			
-		</>
+			<div class="page-background">
+				{localStorage.getItem("role") === "user" && (
+					<Button onClick={handleCreateChat} className="navbar-buttons">
+						Create
+					</Button>
+				)}
+				<Container fluid>
+					<Row>
+						{chats.map((Chat, index) => (
+							<Col key={index} lg={4} md={6} sm={12}>
+								<ChatCard
+									userId={Chat.userID}
+									agentId={Chat.agentId}
+									chatId={Chat._id}
+								/>
+							</Col>
+						))}
+					</Row>
+				</Container>
+			</div>
+		</div>
 	);
 }

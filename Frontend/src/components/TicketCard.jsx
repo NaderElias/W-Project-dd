@@ -4,6 +4,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import "../styles/TicketCard.css";
 import Modal from "react-modal";
+import "../styles/Brands.css";
 Modal.setAppElement("#root"); // Set the root element for the modal
 
 const TicketCard = ({ ticketKey, ticket }) => {
@@ -138,7 +139,7 @@ const TicketCard = ({ ticketKey, ticket }) => {
 	};
 
 	return (
-		<div className="ticket-card">
+		<div className={`ticket-card ${localStorage.getItem("theme-color")}`}>
 			<h3>{ticket.title}</h3>
 			<p>{ticket.description}</p>
 			<p>status: {ticket.status}</p>

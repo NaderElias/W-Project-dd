@@ -1,107 +1,163 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { Form, Button, Modal } from "react-bootstrap";
+import axios from "axios";
 import AppNavBar from "../components/navbar";
 import "../styles/Brands.css";
+let backend_url = "http://localhost:3000/api";
 
 const CustomizationForm = () => {
-  const [brand, setBrand] = useState('');
-  const [color, setColor] = useState('');
-  const [_id, setId] = useState(''); 
-
-  // Create an axios instance with withCredentials set to true
-  const axiosInstance = axios.create({
-    withCredentials: true,
+	const [color, setColor] = useState("");
+	const [_id, setId] = useState("");
+	const [showModal, setShowModal] = useState(false);
+	const [brand, setBrand] = useState({
+    name: '',
+    colorTheme: 'theme-blue',
+    color1: '#000000',
+    color2: '#FFFFFF',
   });
+  const [brandList, setBrandList] = useState([]);
   const [colorTheme, setColorTheme] = useState('theme-blue');
-  useEffect(() => {
-    const currentThemeColor = localStorage.getItem('theme-color');
-    if(currentThemeColor){
-      setColorTheme(currentThemeColor);
+
+	useEffect(() => {
+		const getBrands = async () => {
+      const response = await axios.get(`${backend_url}/branding/get-customization`, {withCredentials: true});
+      setBrandList(response.data.brands)
     }
-  }, []);
-  const handleClick = (theme) => {
+    setColorTheme(localStorage.getItem("theme-color"));
+    getBrands();
+	}, []);
+	const handleClick = (theme) => {
     setColorTheme(theme);
-    localStorage.setItem('theme-color', theme)
-  }
+		localStorage.setItem("theme-color", theme);
+	};
 
-  const handleCreateCustomization = async () => {
-    try {
-      const response = await axiosInstance.post('http://localhost:3000/api/branding/create-customization', {
-        brand,
-        color,
-      });
-      console.log(response.data);
+	const handleModalShow = () => {
+		setShowModal(true);
+	};
+	const handleModalClose = () => {
+		setShowModal(false);
+	};
 
-      // Reset state after successful creation
-      setBrand('');
-      setColor('');
-    } catch (error) {
-      console.error('Error creating customization:', error.response.data.message);
-    }
+	const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setBrand((prevBrand) => ({
+      ...prevBrand,
+      [name]: value,
+    }));
   };
 
-  const handleUpdateCustomization = async () => {
-    try {
-      const response = await axiosInstance.put('http://localhost:3000/api/branding/update-customization', {
-        _id, 
-        color,
-      });
-      console.log(response.data);
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		try {
+			const response = await axios.post(
+				`${backend_url}/branding/create-customization`,
+				brand,
+				{ withCredentials: true }
+			);
+			handleModalClose(); // Close the modal after submission
+      const res = await axios.get(`${backend_url}/branding/get-customization`, {withCredentials: true});
+      setBrandList(res.data.brands)
+		} catch (error) {
+			console.error("Error creating brand:", error);
+		}
+	};
 
-      // Reset state after successful update
-      setId('');
-      setColor('');
-    } catch (error) {
-      console.error('Error updating customization:', error.response.data.message);
-    }
-  };
-  const buttonColors = [
-    ['#0D47A1', '#1E88E5'],
-    ['#d6e5e3', '#9FD8CB'],
-    ['#1e1e1e', '#4e4e4e'],  
-  ];
+	const handleUpdateCustomization = async () => {
+		try {
+			const response = await axiosInstance.put(
+				"http://localhost:3000/api/branding/update-customization",
+				{
+					_id,
+					color,
+				}
+			);
+			console.log(response.data);
 
-  return (
-    <div className={`test ${colorTheme}`}>
-    <AppNavBar />
-    <div class="page-background">
-    <h2 class="txt">Create/Update Customization</h2>
-    <div>
-        <label class="txt">Brand:</label>
-        <input type="text" value={brand} onChange={(e) => setBrand(e.target.value)} />
-    </div>
-    <div>
-        <label class="txt">Color:</label>
-        <input type="text" value={color} onChange={(e) => setColor(e.target.value)} />
-    </div>
-    <button onClick={handleCreateCustomization}>Create Customization (with Brand and Color)</button>
-    <div>
-        <label class="txt">ID:</label>
-        <input type="text" value={_id} onChange={(e) => setId(e.target.value)} />
-    </div>
-    <button onClick={handleUpdateCustomization}>Update Customization (with ID and Color)</button>
-    <div className="button-container">
-  {buttonColors.map(([color1, color2], index) => {
-    let buttonId = '';
-    if (index === 0) buttonId = 'theme-blue';
-    else if (index === 1) buttonId = 'theme-grey';
-    else if (index === 2) buttonId = 'theme-black';
+			// Reset state after successful update
+			setId("");
+			setColor("");
+		} catch (error) {
+			console.error(
+				"Error updating customization:",
+				error.response.data.message
+			);
+		}
+	};
 
-    return (
-      <div
-        key={index}
-        id={buttonId} // Set the id attribute to the determined buttonId
-        className="button"
-        style={{ background: `linear-gradient(${color1}, ${color2})` }}
-        onClick={() => handleClick(buttonId)}
-      />
-    );
-  })}
-</div>
-</div>
-
-    </div>
-  );
+	return (
+		<div className={`test ${colorTheme}`}>
+			<AppNavBar />
+			<div class="page-background">
+				{localStorage.getItem("role") === "admin"? <button onClick={handleModalShow}>Create Brand</button>:<></>}
+				<div className="button-container">
+					{brandList && brandList.map((brand, index) => {
+						return (
+							<div
+								key={index}
+								id={brand.colorTheme} // Set the id attribute to the determined buttonId
+								className="button"
+								style={{ background: `linear-gradient(${brand.buttonColors.color1}, ${brand.buttonColors.color2})` }}
+								onClick={() => handleClick(brand.colorTheme)}
+							/>
+						);
+					})}
+				</div>
+			</div>
+			<Modal show={showModal} onHide={handleModalClose}>
+				<Modal.Header closeButton>
+					<Modal.Title>Create Brand</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form onSubmit={handleSubmit}>
+						<Form.Group controlId="brandName">
+							<Form.Label>Brand Name:</Form.Label>
+							<Form.Control
+								type="text"
+								name="name"
+								value={brand.name}
+								onChange={handleInputChange}
+								required
+							/>
+						</Form.Group>
+						<Form.Group controlId="colorTheme">
+							<Form.Label>Color Theme:</Form.Label>
+							<Form.Control
+								as="select"
+								name="colorTheme"
+								value={brand.colorTheme}
+								onChange={handleInputChange}
+							>
+								<option value="theme-blue">Blue</option>
+								<option value="theme-black">Black</option>
+								<option value="theme-grey">Grey</option>
+							</Form.Control>
+						</Form.Group>
+            <Form.Group controlId="primaryColor">
+              <Form.Label>Primary Color:</Form.Label>
+              <Form.Control
+                type="color"
+                name="color1"
+                value={brand.color1}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="secondaryColor">
+              <Form.Label>Secondary Color:</Form.Label>
+              <Form.Control
+                type="color"
+                name="color2"
+                value={brand.color2}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+						<Button variant="primary" type="submit">
+							Create Brand
+						</Button>
+					</Form>
+				</Modal.Body>
+			</Modal>
+		</div>
+	);
 };
 
 export default CustomizationForm;

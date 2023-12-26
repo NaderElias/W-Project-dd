@@ -12,14 +12,6 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
   
-  h3 {
-    color: #333;
-  }
-  
-  p {
-    color: #555;
-  }
-  
   .rating-section {
     display: flex;
     align-items: center;
@@ -36,7 +28,6 @@
   
   .change-rating-button {
     background-color: #4CAF50;
-    color: white;
     border: none;
     border-radius: 5px;
     padding: 8px 16px;

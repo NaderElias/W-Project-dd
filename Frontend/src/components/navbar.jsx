@@ -51,6 +51,7 @@ export default function AppNavBar() {
 			removeCookies("token");
 			localStorage.removeItem("userId");
 			localStorage.removeItem("role");
+      localStorage.removeItem("theme-color");
 			console.log(response);
 			navigate("/login");
 		} catch (error) {
@@ -119,7 +120,6 @@ export default function AppNavBar() {
 						) : (
 							<></>
 						)}
-						{localStorage.getItem("role") == "admin" ? (
 							<Nav.Item>
 								<Button
 									as={Nav.Link}
@@ -129,9 +129,6 @@ export default function AppNavBar() {
 									Brands
 								</Button>
 							</Nav.Item>
-						) : (
-							<></>
-						)}
             {localStorage.getItem("role") == "admin" ?(
                <></>
               ): (

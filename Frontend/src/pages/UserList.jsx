@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button, Modal, Form, Card, Row, Col, Dropdown } from "react-bootstrap";
 import AppNavBar from "../components/navbar";
+import "../styles/Brands.css";
 
 const UserList = () => {
 	const [users, setUsers] = useState([]);
@@ -151,160 +152,166 @@ const UserList = () => {
 	};
 
 	return (
-		<div>
+		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
-			<h2>Users</h2>
+			<div class="page-background">
+				<h2>Users</h2>
 
-			<Button
-				variant="primary"
-				onClick={handleShowCreateUserModal}
-				className="mb-3"
-			>
-				Create New User
-			</Button>
+				<Button
+					variant="primary"
+					onClick={handleShowCreateUserModal}
+					className="mb-3"
+				>
+					Create New User
+				</Button>
 
-			<Row xs={1} md={2} lg={3} xl={4} className="g-4">
-				{users.map((user) => (
-					<Col key={user._id}>
-						<Card>
-							<Card.Body>
-								<Card.Title>{user.profile.username}</Card.Title>
-								<Card.Text>{""}</Card.Text>
-								<Card.Subtitle className="mb-2 text-muted">
-									{user.email}
-								</Card.Subtitle>
-								<Card.Text>{""}</Card.Text>
-								<Card.Text>
-									{user.profile.firstName} {user.profile.lastName}
-								</Card.Text>
-								<Card.Text>{`role: ${user.role}`}</Card.Text>
-								{user.role != "admin" && (
-									<div className="d-flex justify-content-between">
-										<Button
-											variant="info"
-											onClick={() => handleAssignRole(user._id)}
-										>
-											Assign Role
-										</Button>
-										<Button
-											variant="danger"
-											onClick={() => handleDeleteUser(user._id)}
-										>
-											Delete
-										</Button>
-									</div>
-								)}
+				<Row xs={1} md={2} lg={3} xl={4} className="g-4">
+					{users.map((user) => (
+						<Col key={user._id}>
+							<Card>
+								<Card.Body>
+									<Card.Title>{user.profile.username}</Card.Title>
+									<Card.Text>{""}</Card.Text>
+									<Card.Subtitle className="mb-2 text-muted">
+										{user.email}
+									</Card.Subtitle>
+									<Card.Text>{""}</Card.Text>
+									<Card.Text>
+										{user.profile.firstName} {user.profile.lastName}
+									</Card.Text>
+									<Card.Text>{`role: ${user.role}`}</Card.Text>
+									{user.role != "admin" && (
+										<div className="d-flex justify-content-between">
+											<Button
+												variant="info"
+												onClick={() => handleAssignRole(user._id)}
+											>
+												Assign Role
+											</Button>
+											<Button
+												variant="danger"
+												onClick={() => handleDeleteUser(user._id)}
+											>
+												Delete
+											</Button>
+										</div>
+									)}
 
-								{/* Dropdown for role selection */}
-								{selectedUser === user._id && showRoleDropdown && (
-                  <><p></p>
-									<Dropdown onSelect={handleRoleSelection}>
-										<Dropdown.Toggle variant="info" id="dropdown-basic">
-											Select Role
-										</Dropdown.Toggle>
-										<Dropdown.Menu>
-											<Dropdown.Item eventKey="user">User</Dropdown.Item>
-											<Dropdown.Item eventKey="admin">Admin</Dropdown.Item>
-											<Dropdown.Item eventKey="agent">Agent</Dropdown.Item>
-											<Dropdown.Item eventKey="manager">Manager</Dropdown.Item>
-										</Dropdown.Menu>
-									</Dropdown></>
-								)}
-							</Card.Body>
-						</Card>
-					</Col>
-				))}
-			</Row>
+									{/* Dropdown for role selection */}
+									{selectedUser === user._id && showRoleDropdown && (
+										<>
+											<p></p>
+											<Dropdown onSelect={handleRoleSelection}>
+												<Dropdown.Toggle variant="info" id="dropdown-basic">
+													Select Role
+												</Dropdown.Toggle>
+												<Dropdown.Menu>
+													<Dropdown.Item eventKey="user">User</Dropdown.Item>
+													<Dropdown.Item eventKey="admin">Admin</Dropdown.Item>
+													<Dropdown.Item eventKey="agent">Agent</Dropdown.Item>
+													<Dropdown.Item eventKey="manager">
+														Manager
+													</Dropdown.Item>
+												</Dropdown.Menu>
+											</Dropdown>
+										</>
+									)}
+								</Card.Body>
+							</Card>
+						</Col>
+					))}
+				</Row>
 
-			{/* Create User Modal */}
-			<Modal show={showCreateUserModal} onHide={handleCloseCreateUserModal}>
-				<Modal.Header closeButton>
-					<Modal.Title>Create New User</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<Form>
-						<Form.Group controlId="formEmail">
-							<Form.Label>Email</Form.Label>
-							<Form.Control
-								type="email"
-								placeholder="Enter email"
-								value={newUser.email}
-								onChange={(e) =>
-									setNewUser({ ...newUser, email: e.target.value })
-								}
-							/>
-						</Form.Group>
+				{/* Create User Modal */}
+				<Modal show={showCreateUserModal} onHide={handleCloseCreateUserModal}>
+					<Modal.Header closeButton>
+						<Modal.Title>Create New User</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<Form>
+							<Form.Group controlId="formEmail">
+								<Form.Label>Email</Form.Label>
+								<Form.Control
+									type="email"
+									placeholder="Enter email"
+									value={newUser.email}
+									onChange={(e) =>
+										setNewUser({ ...newUser, email: e.target.value })
+									}
+								/>
+							</Form.Group>
 
-						<Form.Group controlId="formPassword">
-							<Form.Label>Password</Form.Label>
-							<Form.Control
-								type="password"
-								placeholder="Enter password"
-								value={newUser.password}
-								onChange={(e) =>
-									setNewUser({ ...newUser, password: e.target.value })
-								}
-							/>
-						</Form.Group>
+							<Form.Group controlId="formPassword">
+								<Form.Label>Password</Form.Label>
+								<Form.Control
+									type="password"
+									placeholder="Enter password"
+									value={newUser.password}
+									onChange={(e) =>
+										setNewUser({ ...newUser, password: e.target.value })
+									}
+								/>
+							</Form.Group>
 
-						<Form.Group controlId="formUsername">
-							<Form.Label>Username</Form.Label>
-							<Form.Control
-								type="text"
-								placeholder="Enter username"
-								value={newUser.username}
-								onChange={(e) =>
-									setNewProfile({ ...newProfile, username: e.target.value })
-								}
-							/>
-						</Form.Group>
+							<Form.Group controlId="formUsername">
+								<Form.Label>Username</Form.Label>
+								<Form.Control
+									type="text"
+									placeholder="Enter username"
+									value={newUser.username}
+									onChange={(e) =>
+										setNewProfile({ ...newProfile, username: e.target.value })
+									}
+								/>
+							</Form.Group>
 
-						<Form.Group controlId="formFirstName">
-							<Form.Label>First Name</Form.Label>
-							<Form.Control
-								type="text"
-								placeholder="Enter first name"
-								value={newUser.firstName}
-								onChange={(e) =>
-									setNewProfile({ ...newProfile, firstName: e.target.value })
-								}
-							/>
-						</Form.Group>
+							<Form.Group controlId="formFirstName">
+								<Form.Label>First Name</Form.Label>
+								<Form.Control
+									type="text"
+									placeholder="Enter first name"
+									value={newUser.firstName}
+									onChange={(e) =>
+										setNewProfile({ ...newProfile, firstName: e.target.value })
+									}
+								/>
+							</Form.Group>
 
-						<Form.Group controlId="formLastName">
-							<Form.Label>Last Name</Form.Label>
-							<Form.Control
-								type="text"
-								placeholder="Enter last name"
-								value={newUser.lastName}
-								onChange={(e) =>
-									setNewProfile({ ...newProfile, lastName: e.target.value })
-								}
-							/>
-						</Form.Group>
+							<Form.Group controlId="formLastName">
+								<Form.Label>Last Name</Form.Label>
+								<Form.Control
+									type="text"
+									placeholder="Enter last name"
+									value={newUser.lastName}
+									onChange={(e) =>
+										setNewProfile({ ...newProfile, lastName: e.target.value })
+									}
+								/>
+							</Form.Group>
 
-						<Form.Group controlId="formRole">
-							<Form.Label>Role</Form.Label>
-							<Form.Control
-								as="select"
-								value={newUser.role}
-								onChange={(e) =>
-									setNewUser({ ...newUser, role: e.target.value })
-								}
-							>
-								<option value="admin">Admin</option>
-								<option value="user">User</option>
-								<option value="agent">Agent</option>
-								<option value="manager">Manager</option>
-							</Form.Control>
-						</Form.Group>
+							<Form.Group controlId="formRole">
+								<Form.Label>Role</Form.Label>
+								<Form.Control
+									as="select"
+									value={newUser.role}
+									onChange={(e) =>
+										setNewUser({ ...newUser, role: e.target.value })
+									}
+								>
+									<option value="admin">Admin</option>
+									<option value="user">User</option>
+									<option value="agent">Agent</option>
+									<option value="manager">Manager</option>
+								</Form.Control>
+							</Form.Group>
 
-						<Button variant="primary" onClick={handleCreateUser}>
-							Create User
-						</Button>
-					</Form>
-				</Modal.Body>
-			</Modal>
+							<Button variant="primary" onClick={handleCreateUser}>
+								Create User
+							</Button>
+						</Form>
+					</Modal.Body>
+				</Modal>
+			</div>
 		</div>
 	);
 };

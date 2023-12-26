@@ -3,6 +3,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import { Table, Button, Form, Modal } from "react-bootstrap";
 import AppNavBar from "../components/navbar";
+import "../styles/Brands.css";
 
 const backend_url = "http://localhost:3000/api";
 
@@ -27,7 +28,7 @@ const Reports = () => {
 					}
 				);
 				const { status, data } = response;
-        console.log(data);
+				console.log(data);
 				if (status === 200) {
 					setReports(data.reportsAnalytics);
 				} else {
@@ -118,77 +119,79 @@ const Reports = () => {
 	};
 
 	return (
-		<>
+		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
-			<div className="reports-container">
-				<h2>Reports</h2>
-				<Modal show={showModal} onHide={handleCloseModal}>
-					<Modal.Header closeButton>
-						<Modal.Title>Update Report</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<Form>
-							<Form.Group controlId="formAgentPerformance">
-								<Form.Label>Agent Performance</Form.Label>
-								<Form.Control
-									type="text"
-									placeholder="Enter Agent Performance"
-									name="agentPerformance"
-									value={formData.agentPerformance}
-									onChange={handleOnChange}
-								/>
-							</Form.Group>
-						</Form>
-					</Modal.Body>
-					<Modal.Footer>
-						<Button variant="secondary" onClick={handleCloseModal}>
-							Close
-						</Button>
-						<Button
-							variant="primary"
-							onClick={() => handleUpdateReport(formData.ticketId)}
-						>
-							Update Report
-						</Button>
-					</Modal.Footer>
-				</Modal>
-				<Table striped bordered hover>
-					<thead>
-						<tr>
-							<th>Ticket Title</th>
-							<th>Ticket Status</th>
-							<th>Resolution Time</th>
-							<th>Agent Performance</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						{reports.map((report) => (
-							<tr key={report._id}>
-								<td>{report.ticketTitle}</td>
-								<td>{report.ticketStatus}</td>
-								<td>{report.resolutionTime}</td>
-								<td>{report.agentPerformance}</td>
-								<td>
-									<Button
-										variant="info"
-										onClick={() => handleShowUpdateModal(report)}
-									>
-										Edit
-									</Button>{" "}
-									<Button
-										variant="danger"
-										onClick={() => handleDeleteReport(report.ticketId)}
-									>
-										Delete
-									</Button>
-								</td>
+			<div class="page-background">
+				<div className="reports-container">
+					<h2 className="txt">Reports</h2>
+					<Modal show={showModal} onHide={handleCloseModal}>
+						<Modal.Header closeButton>
+							<Modal.Title>Update Report</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<Form>
+								<Form.Group controlId="formAgentPerformance">
+									<Form.Label>Agent Performance</Form.Label>
+									<Form.Control
+										type="text"
+										placeholder="Enter Agent Performance"
+										name="agentPerformance"
+										value={formData.agentPerformance}
+										onChange={handleOnChange}
+									/>
+								</Form.Group>
+							</Form>
+						</Modal.Body>
+						<Modal.Footer>
+							<Button variant="secondary" onClick={handleCloseModal}>
+								Close
+							</Button>
+							<Button
+								variant="primary"
+								onClick={() => handleUpdateReport(formData.ticketId)}
+							>
+								Update Report
+							</Button>
+						</Modal.Footer>
+					</Modal>
+					<Table striped bordered hover>
+						<thead>
+							<tr>
+								<th>Ticket Title</th>
+								<th>Ticket Status</th>
+								<th>Resolution Time</th>
+								<th>Agent Performance</th>
+								<th>Actions</th>
 							</tr>
-						))}
-					</tbody>
-				</Table>
+						</thead>
+						<tbody>
+							{reports.map((report) => (
+								<tr key={report._id}>
+									<td>{report.ticketTitle}</td>
+									<td>{report.ticketStatus}</td>
+									<td>{report.resolutionTime}</td>
+									<td>{report.agentPerformance}</td>
+									<td>
+										<Button
+											variant="info"
+											onClick={() => handleShowUpdateModal(report)}
+										>
+											Edit
+										</Button>{" "}
+										<Button
+											variant="danger"
+											onClick={() => handleDeleteReport(report.ticketId)}
+										>
+											Delete
+										</Button>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</Table>
+				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 

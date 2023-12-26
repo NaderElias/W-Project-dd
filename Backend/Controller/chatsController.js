@@ -104,7 +104,6 @@ const chatsController = {
 				return res.status(200).json({ chat });
 			}
 			const chat = await chatModel.find({}).sort({timestamp: -1});
-      console.log(chat);
 			if (!chat) {
 				return res.status(404).json({ message: "Chat not found" });
 			}

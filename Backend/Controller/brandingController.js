@@ -3,8 +3,8 @@ const brandModel = require("../Models/brandModel");
 const brandingController = {
   getCustomization: async (req, res) => {
     try {
-      const customization = await brandModel.find({});
-      res.status(200).json({ customization: customization });
+      const brands = await brandModel.find({});
+      res.status(200).json({ brands });
     } catch (error) {
       console.error("Error in brandingController.getCustomization: ", error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -13,19 +13,20 @@ const brandingController = {
 
   createCustomization: async (req, res) => {
     try {
-      const { brand, color } = req.body;
+      const { name, colorTheme, color1, color2 } = req.body;
 
-      if (!brand || !color) {
+      if (!name || !colorTheme || !color1 || !color2) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
-      const customization = await brandModel.findOne({ brand: brand });
+      const customization = await brandModel.findOne({ name: name });
       if (customization) {
         return res.status(400).json({ message: "brand Already Exists" });
       }
-
+      const buttonColors = {color1, color2};
       const newCustomization = new brandModel({
-        brand,
-        color,
+        name,
+        colorTheme,
+        buttonColors,
       });
 
       await newCustomization.save();

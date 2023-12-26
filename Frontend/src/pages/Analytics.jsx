@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import AppNavBar from "../components/navbar";
 import axios from "axios";
+import "../styles/Brands.css";
 
 const AnalyticsPage = () => {
 	const [analyticsData, setAnalyticsData] = useState(null);
@@ -69,29 +70,31 @@ const AnalyticsPage = () => {
 	// Now you can use the variables: issue, statusPercent, statusPercentFilter, and relation
 
 	return (
-		<>
+		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
-			<Container>
-				<PieChart width={700} height={700} margin={50}>
-					<Pie
-						data={statusPercent}
-						dataKey="percentage"
-						nameKey="status"
-						outerRadius={250}
-						fill="#8884d8"
-						label
-					>
-						{data.map((entry, index) => (
-							<Cell
-								key={`cell-${index}`}
-								fill={colors[index % colors.length]}
-							/>
-						))}
-					</Pie>
-					<Legend />
-				</PieChart>
-			</Container>
-		</>
+			<div class="page-background">
+				<Container>
+					<PieChart width={700} height={700} margin={50}>
+						<Pie
+							data={statusPercent}
+							dataKey="percentage"
+							nameKey="status"
+							outerRadius={250}
+							fill="#8884d8"
+							label
+						>
+							{data.map((entry, index) => (
+								<Cell
+									key={`cell-${index}`}
+									fill={colors[index % colors.length]}
+								/>
+							))}
+						</Pie>
+						<Legend />
+					</PieChart>
+				</Container>
+			</div>
+		</div>
 	);
 };
 
