@@ -5,16 +5,16 @@ const messageSchema = mongoose.Schema({
     type: Object,
     required: true,
   },
+  senderUsername: {
+    type: String,
+  },
   message: {
     type: String,
     required: true,
   },
-  securityId: {
-    type: Object,
-  },
   timestamp: {
     type: Date,
-    default: { $$NOW: true },
+    default: Date.now,
   },
 });
 const chatSchema = mongoose.Schema({
@@ -25,11 +25,25 @@ const chatSchema = mongoose.Schema({
     type: Object,
     required: true,
   },
-  agentID: {
+  agentId: {
     type: Object,
     required: true,
   },
+  encryption: {
+    encryptionKey: {
+      type: String,
+      required: true,
+    },
+    IV: {
+      type: String,
+      required: true,
+    },
+  },
   chat: [messageSchema],
+  timestamp: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model("chatModel", chatSchema);

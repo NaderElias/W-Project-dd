@@ -5,35 +5,20 @@ const mongoose = require("mongoose");
 const cron = require("node-cron");
 const { spawn } = require("child_process");
 const sessionModel = require("./Models/sessionModel");
+const { checkQ } = require("./Controller/ticketsController");
 const http = require("http");
 const socketIo = require("socket.io");
-const server = http.createServer(app);
-const io = socketIo(server);
 
-io.on("connection", (socket) => {
-  console.log("a user connected");
-  socket.on("start chat", (userInfo) => {
-    io.emit("chat started", userInfo);
-  });
-  socket.on("chat message", (msg) => {
-    console.log("message: " + msg);
-    // Emit the message to all connected clients
-    io.emit("chat message", msg);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-});
 //always comment what you don't use
-// const ticketRouter = require("./Routes/tickets");
-// const userRouter = require("./Routes/users");
-// const authRouter = require("./Routes/auth");
-// const automationRouter = require("./Routes/automation");
-// const brandingRouter = require("./Routes/branding");
-// const chatRouter = require("./Routes/chats");
-// const knowledgeBaseRouter = require("./Routes/knowledgeBase");
-// const reportsRouter = require("./Routes/reportsAnalytics");
+const ticketRouter = require("./Routes/tickets");
+const userRouter = require("./Routes/users");
+const authRouter = require("./Routes/auth");
+const automationRouter = require("./Routes/automation");
+const brandingRouter = require("./Routes/branding");
+const chatRouter = require("./Routes/chats");
+const knowledgeBaseRouter = require("./Routes/knowledgeBase");
+const reportsRouter = require("./Routes/reportsAnalytics");
+const emailRouter = require("./Routes/email");
 
 require("dotenv").config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
@@ -57,6 +42,35 @@ app.use(
     credentials: true,
   })
 );
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: process.env.ORIGIN,
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    credentials: true,
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("a user connected");
+  socket.on("start chat", (userInfo) => {
+    io.emit("chat started", userInfo);
+  });
+  socket.on("chat message", (msg) => {
+    console.log("message: " + msg);
+    // Emit the message to all connected clients
+    io.emit("chat message", msg);
+  });
+  // Handle 'new notification' event
+  socket.on("new notification", (notification) => {
+    console.log("New notification: " + notification);
+    // Emit the notification to the recipient
+    io.to(notification.agentId).emit("new notification", notification);
+  });
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+});
 
 const db_name = process.env.DB_NAME;
 const db_url = `${process.env.DB_URL}/${db_name}`;
@@ -93,21 +107,25 @@ function backupMongoDB() {
   });
 }
 
-cron.schedule("0 0 * * * *", () => {
+cron.schedule("0 0 * * *", () => {
   backupMongoDB();
+});
+cron.schedule("* */6 * * *", () => {
+  console.log("assigning tickets");
+  checkQ();
 });
 
 // always comment what you don't use
-// app.use("/api", authRouter);
-// app.use(authenticationMiddleware);
-// app.use("/api/tickets", ticketRouter);
-// app.use("/api/users", userRouter);
-// app.use("/api/automation", automationRouter);
-// app.use("/api/branding", brandingRouter);
-// app.use("/api/chats", chatRouter);
-// app.use("/api/knowledgeBase", knowledgeBaseRouter);
-// app.use("/api/reports", reportsRouter);
-
+app.use("/api", authRouter);
+app.use(authenticationMiddleware);
+app.use("/api/tickets", ticketRouter);
+app.use("/api/users", userRouter);
+app.use("/api/automation", automationRouter);
+app.use("/api/branding", brandingRouter);
+app.use("/api/chats", chatRouter);
+app.use("/api/knowledgeBase", knowledgeBaseRouter);
+app.use("/api/reports", reportsRouter);
+app.use("/api/email", emailRouter);
 mongoose
   .connect(db_url, connectionOptions)
   .then(() => {

@@ -23,7 +23,10 @@ const workFlowSchema = mongoose.Schema({
 			"Website errors",
 		],
 	},
-      workflow: [String]
+      workflow: {
+		type: String,
+		//required: true
+	  }
 });
 
 module.exports = mongoose.model("workFlowModel", workFlowSchema);
