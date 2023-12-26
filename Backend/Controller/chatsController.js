@@ -2,6 +2,7 @@ const chatModel = require("../Models/chatModel");
 const userModel = require("../Models/userModel");
 const notificationModel = require("../Models/notificationModel");
 const crypto = require("crypto");
+const { timeStamp } = require("console");
 
 const chatsController = {
 	createChat: async (req, res) => {
@@ -16,16 +17,8 @@ const chatsController = {
 					notification.agentId.toString()
 				);
 
-				const availableAgents = agents.filter(
-					(agent) => !notifiedAgentIds.includes(agent._id.toString())
-				);
-
-				if (availableAgents.length === 0) {
-					return res.status(400).json({ message: "No available agents" });
-				}
-
-				const randomIndex = Math.floor(Math.random() * availableAgents.length);
-				selectedAgentID = availableAgents[randomIndex]._id.toString();
+				const randomIndex = Math.floor(Math.random() * agents.length);
+				selectedAgentID = agents[randomIndex]._id.toString();
 			}
 
 			const encryptionKey = crypto.randomBytes(32);
@@ -110,7 +103,8 @@ const chatsController = {
 				});
 				return res.status(200).json({ chat });
 			}
-			const chat = await chatModel.find({});
+			const chat = await chatModel.find({}).sort({timestamp: -1});
+      console.log(chat);
 			if (!chat) {
 				return res.status(404).json({ message: "Chat not found" });
 			}

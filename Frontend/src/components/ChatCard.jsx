@@ -27,7 +27,6 @@ const ChatCard = ({ userId, agentId, chatId }) => {
 
     const fetchAgentData = async () => {
       try {
-        console.log("agentId", agentId);
         const agentResponse = await axios.get(
           `http://localhost:3000/api/users/get-profile?_id=${agentId}`,
           { withCredentials: true }
