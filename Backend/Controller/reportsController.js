@@ -5,7 +5,7 @@ const knowledgeBaseModel = require("../Models/knowledgeBaseModel");
 const reportController = {
   createReport: async (req, res) => {
     try {
-      // Extract report data from the request body.
+      // Extract report data from the request body
       const { ticketId } = req.query;
       const { ticketStatus, resolutionTime, agentPerformance } = req.body;
       const targetToken = req.cookies.token;
