@@ -51,7 +51,7 @@ export default function AppNavBar() {
 			removeCookies("token");
 			localStorage.removeItem("userId");
 			localStorage.removeItem("role");
-      localStorage.removeItem("theme-color");
+			localStorage.removeItem("theme-color");
 			console.log(response);
 			navigate("/login");
 		} catch (error) {
@@ -73,9 +73,9 @@ export default function AppNavBar() {
 			console.error(error);
 		}
 	};
-	const handleNotificationClick = (_id, chatId) => {
+	const handleNotificationClick = async (_id, chatId) => {
 		localStorage.setItem("chatId", chatId);
-		handleDeleteNotification(_id);
+		await handleDeleteNotification(_id);
 		navigate("/chatroom");
 	};
 	return (
@@ -120,42 +120,46 @@ export default function AppNavBar() {
 						) : (
 							<></>
 						)}
+						<Nav.Item>
+							<Button as={Nav.Link} href="/branding" className="navbar-buttons">
+								Brands
+							</Button>
+						</Nav.Item>
+						{localStorage.getItem("role") == "admin" ? (
+							<></>
+						) : (
 							<Nav.Item>
 								<Button
 									as={Nav.Link}
-									href="/branding"
+									href="/tickets"
 									className="navbar-buttons"
 								>
-									Brands
+									Tickets
 								</Button>
 							</Nav.Item>
-            {localStorage.getItem("role") == "admin" ?(
-               <></>
-              ): (
-               <Nav.Item>
-                 <Button as={Nav.Link} href="/tickets" className="navbar-buttons">
-                    Tickets
-                  </Button>
-                </Nav.Item>
- )  }
-{localStorage.getItem("role") === "manager" && (
-    <Nav.Item>
-        <Button as={Nav.Link} href="/reports" className="navbar-buttons">
-            Reports
-        </Button>
-    </Nav.Item>
-)}
-{localStorage.getItem("role") === "manager" && (
-    <Nav.Item>
-        <Button
-            as={Nav.Link}
-            href="/analytics"
-            className="navbar-buttons"
-        >
-            Analytics
-        </Button>
-    </Nav.Item>
-)}
+						)}
+						{localStorage.getItem("role") === "manager" && (
+							<Nav.Item>
+								<Button
+									as={Nav.Link}
+									href="/reports"
+									className="navbar-buttons"
+								>
+									Reports
+								</Button>
+							</Nav.Item>
+						)}
+						{localStorage.getItem("role") === "manager" && (
+							<Nav.Item>
+								<Button
+									as={Nav.Link}
+									href="/analytics"
+									className="navbar-buttons"
+								>
+									Analytics
+								</Button>
+							</Nav.Item>
+						)}
 						{localStorage.getItem("role") == "user" ? (
 							<Nav.Item>
 								<Button
