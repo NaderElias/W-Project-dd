@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const NotificationSchema = new mongoose.Schema({
   agentId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Object,
     required: true,
   },
   chatId: {
