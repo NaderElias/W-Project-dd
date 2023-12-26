@@ -92,7 +92,7 @@ export default function AppNavBar() {
 	};
 	return (
 		<>
-			<Navbar expand="lg" className="bg-body-tertiary">
+			<Navbar expand="lg" className="bg-body-tertiary fixed-top">
 				<Container>
 					<Nav>
 						<Nav.Item>
@@ -226,18 +226,18 @@ export default function AppNavBar() {
 				</Modal.Header>
 				<Modal.Body>
 					{notification.map((notification, index) => (
-						<Card
+						<Container
 							key={index}
-							className="mb-2 raijin"
+							className="mb-2"
 							onClick={() =>
 								handleNotificationClick(notification._id, notification.chatId)
 							}
 						>
-							<Card.Body>
-								<Card.Text>{notification.message}</Card.Text>
+							<div className="notification">
+								<h4>{notification.message}</h4>
 								<Button
 									variant="danger"
-									className="raijin"
+									className="raniji"
 									onClick={(e) => {
 										e.stopPropagation(); // prevent the card's onClick from being triggered
 										handleDeleteNotification(notification._id);
@@ -245,8 +245,8 @@ export default function AppNavBar() {
 								>
 									Delete
 								</Button>
-							</Card.Body>
-						</Card>
+							</div>
+						</Container>
 					))}
 				</Modal.Body>
 				<Modal.Footer className="modal-footer">

@@ -229,18 +229,24 @@ const TicketCard = ({ ticketKey, ticket }) => {
 	};
 
 	return (
-		<div className={`ticket-card ${localStorage.getItem("theme-color")}`}>
-			<h3>{ticket.title}</h3>
+		<div className={`card ${localStorage.getItem("theme-color")}`}>
+			<div className="main-content">
+			<div className="header">
+			<span >Status: {ticket.status}</span>
+			<br/>
+			<span className="rating">Rating: {ticket.rating}</span>
+			</div>
+			<h3 className="heading">{ticket.title}</h3>
 			<p>{ticket.description}</p>
-			<p>status: {ticket.status}</p>
+			
 			{ticket.resolutionDetails && ticket.workflow && (
-				<div>
-					<p>Resolution Details: {ticket.resolutionDetails}</p>
-					<p>Workflow: {ticket.workflow}</p>
+				<div className="categories">
+					<p><span style={{marginRight: "10px"}}>Resolution Details: </span> {ticket.resolutionDetails}</p>
+					<p><span style={{marginRight: "10px"}}>Workflow: </span> {ticket.workflow}</p>
 				</div>
 			)}
 
-			<p className="rating">Rating: {ticket.rating}</p>
+			
 			{localStorage.getItem("role") === "user" && ticket.status === "closed" ? (
 				<>
 					<div className="rating-section">
@@ -283,7 +289,7 @@ const TicketCard = ({ ticketKey, ticket }) => {
 			) : null}
 
 			{localStorage.getItem("role") === "manager" &&
-			ticket.status == "closed" ? (
+				ticket.status == "closed" ? (
 				<button onClick={reportTrue} className="change-rating-button">
 					Create Report
 				</button>
@@ -324,11 +330,10 @@ const TicketCard = ({ ticketKey, ticket }) => {
 						<button
 							type="button"
 							onClick={handleUpdate}
-							className={`create-button ${
-								!(newTicket.resolutionDetails && newTicket.workflow)
+							className={`create-button ${!(newTicket.resolutionDetails && newTicket.workflow)
 									? "disabled"
 									: ""
-							}`}
+								}`}
 							disabled={!newTicket.resolutionDetails || !newTicket.workflow}
 						>
 							Update Solution
@@ -366,11 +371,10 @@ const TicketCard = ({ ticketKey, ticket }) => {
 						<button
 							type="button"
 							onClick={handleReport}
-							className={`create-button ${
-								!(newReport.resolutionTime && newReport.agentPerformance)
+							className={`create-button ${!(newReport.resolutionTime && newReport.agentPerformance)
 									? "disabled"
 									: ""
-							}`}
+								}`}
 							disabled={
 								!newReport.resolutionTime || !newReport.agentPerformance
 							}
@@ -387,6 +391,8 @@ const TicketCard = ({ ticketKey, ticket }) => {
 					</form>
 				</div>
 			</Modal>
+			</div>
+			
 		</div>
 	);
 };

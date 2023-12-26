@@ -142,9 +142,9 @@ export default function ProfilePage() {
 		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
 			<div class="page-background">
-				<Container className="mt-5">
-					<Card className="mx-auto" style={{ maxWidth: "600px" }}>
-						<Card.Body>
+				<Container>
+					<Card className={`mx-auto disableHover ${localStorage.getItem("theme-color")}`} style={{ maxWidth: "600px"}}>
+						<Card.Body style={{paddingTop: "50px"}}>
 							<Card.Title className="mb-4 text-center">Profile</Card.Title>
 							<Row className="mb-2">
 								<div className="d-flex justify-content-between">

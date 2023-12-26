@@ -188,7 +188,7 @@ const UserList = () => {
 		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
 			<div class="page-background">
-				<h2>Users</h2>
+				<h2 className="txt">Users</h2>
 
 				<Button
 					variant="primary"
@@ -201,11 +201,11 @@ const UserList = () => {
 				<Row xs={1} md={2} lg={3} xl={4} className="g-4">
 					{users.map((user) => (
 						<Col key={user._id}>
-							<Card>
+							<Card className={`card ${localStorage.getItem("theme-color")}`}>
 								<Card.Body>
 									<Card.Title>{user.profile.username}</Card.Title>
 									<Card.Text>{""}</Card.Text>
-									<Card.Subtitle className="mb-2 text-muted">
+									<Card.Subtitle className="mb-2 txt">
 										{user.email}
 									</Card.Subtitle>
 									<Card.Text>{""}</Card.Text>
