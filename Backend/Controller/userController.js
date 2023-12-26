@@ -204,7 +204,7 @@ const userController = {
       res.status(500).json({ message: "server error" });
     }
   },
-  //Admin getting all users
+  //Admin getting all user
   getAllUsers: async (req, res) => {
     try {
       //getting all users and outputting them
