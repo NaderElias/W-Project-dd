@@ -199,31 +199,29 @@ const reportController = {
       ]);
       const relation = await ticketsModel.aggregate([
         {
-          $match: { $or: [{ status: "open" }, { status: "in progress" }] }, // Filter by open or in progress status
+          $match: { $or: [{ status: "open" }, { status: "in progress" }, { status: "closed" }] },
         },
         {
           $group: {
-            _id: {
-              status: "$status",
-              category: "$category",
-              priority: "$priority",
-            },
+            _id: { createdAt: { $dateToString: { format: "%m-%d", date: "$createdAt" } } },
             count: { $sum: 1 },
           },
         },
         {
           $project: {
             _id: 0,
-            status: "$_id.status",
-            category: "$_id.category",
-            priority: "$_id.priority",
+            createdAt: "$_id.createdAt",
+            count: 1,
             percentage: { $multiply: [{ $divide: ["$count", total] }, 100] },
           },
         },
         {
-          $sort: { category: 1, priority: 1 }, // Sort by category and priority in ascending order
+          $sort: { createdAt: 1 },
         },
       ]);
+      
+      
+      
       res.status(200).json({
         message: "meh",
         issue: issue,
