@@ -36,6 +36,10 @@ export default function AppNavBar() {
 			setNotification(response.data.notification);
 		} catch (error) {
 			console.error(error);
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
 		}
 	};
 	useEffect(() => {
@@ -57,6 +61,10 @@ export default function AppNavBar() {
 		} catch (error) {
 			console.log("error");
 			console.log(error);
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
 		}
 	};
 
@@ -71,6 +79,10 @@ export default function AppNavBar() {
 			getNotification();
 		} catch (error) {
 			console.error(error);
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
 		}
 	};
 	const handleNotificationClick = async (_id, chatId) => {
@@ -108,23 +120,30 @@ export default function AppNavBar() {
 							<></>
 						)}
 						{localStorage.getItem("role") == "admin" ? (
-							<Nav.Item>
-								<Button
-									as={Nav.Link}
-									href="/userlist"
-									className="navbar-buttons"
-								>
-									User List
-								</Button>
-							</Nav.Item>
+							<>
+								<Nav.Item>
+									<Button
+										as={Nav.Link}
+										href="/userlist"
+										className="navbar-buttons"
+									>
+										User List
+									</Button>
+								</Nav.Item>
+								<Nav.Item>
+									<Button
+										as={Nav.Link}
+										href="/branding"
+										className="navbar-buttons"
+									>
+										Brands
+									</Button>
+								</Nav.Item>
+							</>
 						) : (
 							<></>
 						)}
-						<Nav.Item>
-							<Button as={Nav.Link} href="/branding" className="navbar-buttons">
-								Brands
-							</Button>
-						</Nav.Item>
+
 						{localStorage.getItem("role") == "admin" ? (
 							<></>
 						) : (

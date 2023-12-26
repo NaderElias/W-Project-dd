@@ -10,6 +10,7 @@ export default function HomePage() {
 	const navigate = useNavigate();
 	const [cookies, removeCookies] = useCookies(["token"]);
 	const [userName, setUserName] = useState("");
+	const [colorTheme, setColorTheme] = useState('theme-blue');
 
 	useEffect(() => {
 		async function fetchData() {
@@ -25,10 +26,21 @@ export default function HomePage() {
 						}
 					);
 					setUserName(response.data.user.profile.username);
+					const brand = await axios.get(
+						`${backend_url}/branding/get-brand`,
+						{
+							withCredentials:true,
+						}
+					);
+					setColorTheme(brand.data.brand.colorTheme);
+					localStorage.setItem("theme-color", brand.data.brand.colorTheme);
 				}
 			} catch (error) {
 				console.log("error");
 				console.log(error);
+				if(error.response.status == 403){
+					removeCookies("token")
+				}
 			}
 		}
 
@@ -46,7 +58,7 @@ export default function HomePage() {
 	return (
 		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
-			<div class="page-background">
+			<div className="page-background">
 				<h1 className = "txt" style={{ textAlign: "center", margin: "30px"}}>
 					Welcome {userName}
 				</h1>

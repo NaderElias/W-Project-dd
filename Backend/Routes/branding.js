@@ -7,10 +7,17 @@ const authorizationMiddleware = require("../Middleware/authorizationMiddleware")
 const brandingController = require("../Controller/brandingController");
 
 router
-  .route("/get-customization")
+  .route("/get-all-customization")
+  .get(
+    authorizationMiddleware(["admin"]),
+    brandingController.getAllCustomization
+  );
+
+router
+  .route("/get-brand")
   .get(
     authorizationMiddleware(["user", "admin", "manager", "agent"]),
-    brandingController.getCustomization
+    brandingController.getBrand
   );
 
 router

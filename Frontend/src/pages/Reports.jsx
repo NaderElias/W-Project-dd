@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { Table, Button, Form, Modal } from "react-bootstrap";
 import AppNavBar from "../components/navbar";
@@ -8,6 +9,7 @@ import "../styles/Brands.css";
 const backend_url = "http://localhost:3000/api";
 
 const Reports = () => {
+	const navigate = useNavigate();
 	const [cookies] = useCookies(["token"]);
 	const [reports, setReports] = useState([]);
 	const [errorMessage, setErrorMessage] = useState("");
@@ -37,8 +39,16 @@ const Reports = () => {
 			} catch (error) {
 				console.error(error);
 				setErrorMessage("Server error");
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
 			}
 		};
+
+		if(localStorage.getItem("role") === "user" || localStorage.getItem("role") === "agent"){
+			navigate("/")
+		}
 
 		fetchReports();
 	}, []);
@@ -74,6 +84,10 @@ const Reports = () => {
 		} catch (error) {
 			console.error(error);
 			setErrorMessage("Server error");
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
 		}
 	};
 
@@ -98,6 +112,10 @@ const Reports = () => {
 		} catch (error) {
 			console.error(error);
 			setErrorMessage("Server error");
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
 		}
 	};
 

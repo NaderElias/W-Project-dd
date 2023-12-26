@@ -26,6 +26,10 @@ export default function ChatsPage() {
 			setNotification(response.data.notification);
 		} catch (error) {
 			console.error(error);
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
 		}
 	};
 	useEffect(() => {
@@ -52,6 +56,10 @@ export default function ChatsPage() {
 			localStorage.removeItem("agentId");
 		} catch (error) {
 			console.error("Error:", error);
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
 		}
 	};
 	const handleCreateChat = async () => {
@@ -74,6 +82,10 @@ export default function ChatsPage() {
 			// Create a notification after creating a chat
 		} catch (error) {
 			console.error(error);
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
 		}
 	};
 	const handleDeleteNotification = async (_id) => {
@@ -87,6 +99,10 @@ export default function ChatsPage() {
 			getNotification();
 		} catch (error) {
 			console.error(error);
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
 		}
 	};
 	const getChats = async () => {
@@ -109,6 +125,10 @@ export default function ChatsPage() {
 			setChats(response.data.chat);
 		} catch (error) {
 			console.error(error);
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
 		}
 	};
 	const handleNotificationClick = (_id, chatId) => {

@@ -22,6 +22,10 @@ const ChatCard = ({ userId, agentId, chatId }) => {
         setUserData(userResponse.data.user);
       } catch (error) {
         console.error("Error fetching user data:", error);
+        if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
       }
     };
 
@@ -34,6 +38,10 @@ const ChatCard = ({ userId, agentId, chatId }) => {
         setAgentData(agentResponse.data.user);
       } catch (error) {
         console.error("Error fetching agent data:", error);
+        if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
       }
     };
 

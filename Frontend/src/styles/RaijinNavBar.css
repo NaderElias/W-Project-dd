@@ -7,7 +7,7 @@
 }
 
 .navbar-buttons:hover {
-  background-color: #007bff;
+  background-color: #032d5a;
   color: white;
 }
 @keyframes notification-bounce {
@@ -22,6 +22,9 @@
 
 .notification-button:hover {
   animation: notification-bounce 1s infinite;
+}
+.notification-button {
+  background: #007bff;
 }
 .modal-header {
   background-color: #f8f9fa;

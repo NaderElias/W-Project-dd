@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
 	Button,
@@ -16,6 +17,7 @@ import "../styles/Brands.css";
 const backend_url = "http://localhost:3000/api";
 
 export default function ProfilePage() {
+	const navigate = useNavigate();
 	const [cookies, removeCookies] = useCookies(["token"]);
 	const [profile, setProfile] = useState({
 		username: "",
@@ -48,6 +50,10 @@ export default function ProfilePage() {
 				setProfile(response.data.user.profile);
 			} catch (error) {
 				console.error("Error fetching user profile:", error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
 			}
 		}
 
@@ -64,22 +70,29 @@ export default function ProfilePage() {
 	const handleSaveChanges = async () => {
 		// Handle updating profile logic here
 		console.log("Updating profile...");
-		const response = await axios.put(
-			`${backend_url}/users/update-profile?_id=${localStorage.getItem(
-				"userId"
-			)}`,
-			{
-				profile: {
-					newUsername,
-					newFirstName,
-					newLastName,
+		try {
+			const response = await axios.put(
+				`${backend_url}/users/update-profile?_id=${localStorage.getItem(
+					"userId"
+				)}`,
+				{
+					profile: {
+						newUsername,
+						newFirstName,
+						newLastName,
+					},
 				},
-			},
-			{ withCredentials: true }
-		);
-		console.log(response);
-		if (response.status === 200) setProfile(response.data.user.profile);
-		setShowEditModal(false);
+				{ withCredentials: true }
+			);
+			console.log(response);
+			if (response.status === 200) setProfile(response.data.user.profile);
+			setShowEditModal(false);
+		} catch (error) {
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
+		}
 	};
 
 	const handleCloseEditModal = () => {
@@ -95,20 +108,27 @@ export default function ProfilePage() {
 
 	const handleSavePasswordChanges = async () => {
 		// Handle password change logic here
-		console.log("Changing password...");
-		const response = await axios.put(
-			`${backend_url}/users/change-password?_id=${localStorage.getItem(
-				"userId"
-			)}`,
-			{
-				oldPassword,
-				newPassword,
-				confirmNewPassword,
-			},
-			{ withCredentials: true }
-		);
-		console.log(response);
-		setShowPasswordModal(false);
+		try {
+			console.log("Changing password...");
+			const response = await axios.put(
+				`${backend_url}/users/change-password?_id=${localStorage.getItem(
+					"userId"
+				)}`,
+				{
+					oldPassword,
+					newPassword,
+					confirmNewPassword,
+				},
+				{ withCredentials: true }
+			);
+			console.log(response);
+			setShowPasswordModal(false);
+		} catch (error) {
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
+		}
 	};
 
 	const handleClosePasswordModal = () => {

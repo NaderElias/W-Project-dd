@@ -1,13 +1,18 @@
 // src/components/TicketCard.js
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import PropTypes from "prop-types";
 import "../styles/TicketCard.css";
 import Modal from "react-modal";
 import "../styles/Brands.css";
+
+let backend_url = "http://localhost:3000/api";
+
 Modal.setAppElement("#root"); // Set the root element for the modal
 
 const TicketCard = ({ ticketKey, ticket }) => {
+	const navigate = useNavigate();
 	const [newRating, setNewRating] = useState(1);
 	const [lec, setLec] = useState(1);
 	const [isModalOpen, setModalOpen] = useState(false);
@@ -33,7 +38,13 @@ const TicketCard = ({ ticketKey, ticket }) => {
 			.then((response) => {
 				console.log(response.data);
 			})
-			.catch((error) => console.error("Error updating rating:", error));
+			.catch((error) => {
+				console.error("Error updating rating:", error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
+			});
 		setLec(lec + 1);
 		ticket.rating = newRating;
 	};
@@ -46,13 +57,23 @@ const TicketCard = ({ ticketKey, ticket }) => {
 			ticket.workflow != ""
 		) {
 			axios
-				.put(`http://localhost:3000/api/tickets/update-Ticket?_id=${ticket._id}`, {status: "closed"}, {
-					withCredentials: true,
-				})
+				.put(
+					`http://localhost:3000/api/tickets/update-Ticket?_id=${ticket._id}`,
+					{ status: "closed" },
+					{
+						withCredentials: true,
+					}
+				)
 				.then((response) => {
 					console.log(response.data);
 				})
-				.catch((error) => console.error("Error updating rating:", error));
+				.catch((error) => {
+					console.error("Error updating rating:", error);
+					if (error.response.status == 403) {
+						removeCookies("token");
+						navigate("/");
+					}
+				});
 			ticket.status = "closed";
 			setLec(lec + 1);
 		}
@@ -69,10 +90,20 @@ const TicketCard = ({ ticketKey, ticket }) => {
 		//here update sol
 
 		const ticko = await axios
-			.put(`http://localhost:3000/api/tickets/update-Ticket?_id=${ticket._id}`, newTicket, {
-				withCredentials: true,
-			})
-			.catch((error) => console.error("Error updating solution:", error));
+			.put(
+				`http://localhost:3000/api/tickets/update-Ticket?_id=${ticket._id}`,
+				newTicket,
+				{
+					withCredentials: true,
+				}
+			)
+			.catch((error) => {
+				console.error("Error updating solution:", error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
+			});
 		setModalOpen(false);
 		ticket.resolutionDetails = newTicket.resolutionDetails;
 		ticket.workflow = newTicket.workflow;
@@ -92,11 +123,70 @@ const TicketCard = ({ ticketKey, ticket }) => {
 					withCredentials: true,
 				}
 			)
-			.catch((error) => {if(error.response.status === 400){alert('Report already exists');}});
+			.catch((error) => {
+				if (error.response.status === 400) {
+					alert("Report already exists");
+				}
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/")
+				}
+			});
 		setReporto(false);
 		setLec(lec + 1);
 
 		//update ticket
+	};
+
+	const createNotification = async (agentId) => {
+		try {
+			const chatId = localStorage.getItem("chatId");
+			const response = await axios.post(
+				`${backend_url}/chats/create-notification`,
+				{
+					agentId: agentId,
+					message:
+						"A new chat has been created by the user just now Join or get fired!",
+					chatId: chatId,
+				},
+				{ withCredentials: true }
+			);
+			localStorage.removeItem("agentId");
+		} catch (error) {
+			console.error("Error:", error);
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/")
+			}
+		}
+	};
+
+	const handleCreateChat = async () => {
+		try {
+			const userID = localStorage.getItem("userId");
+			const response = await axios.post(
+				`${backend_url}/chats/create`,
+				{
+					userID: userID,
+					agentId: ticket.assignedAgentId,
+				},
+				{ withCredentials: true }
+			);
+			localStorage.setItem("agentId", response.data.newChat.agentId);
+			localStorage.setItem("chatId", response.data.newChat._id);
+			const agentId = localStorage.getItem("agentId");
+			await createNotification(agentId);
+
+			navigate("/chatroom"); //response.data.newChat._id); // navigate to the new chat
+
+			// Create a notification after creating a chat
+		} catch (error) {
+			console.error(error);
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/")
+			}
+		}
 	};
 
 	const closeModal = () => {
@@ -143,44 +233,49 @@ const TicketCard = ({ ticketKey, ticket }) => {
 			<h3>{ticket.title}</h3>
 			<p>{ticket.description}</p>
 			<p>status: {ticket.status}</p>
-			{ticket.resolutionDetails &&
-				ticket.workflow &&
-				 (
-					<div>
-						<p>Resolution Details: {ticket.resolutionDetails}</p>
-						<p>Workflow: {ticket.workflow}</p>
-					</div>
-				)}
+			{ticket.resolutionDetails && ticket.workflow && (
+				<div>
+					<p>Resolution Details: {ticket.resolutionDetails}</p>
+					<p>Workflow: {ticket.workflow}</p>
+				</div>
+			)}
 
 			<p className="rating">Rating: {ticket.rating}</p>
 			{localStorage.getItem("role") === "user" && ticket.status === "closed" ? (
-				<div className="rating-section">
-					<label htmlFor={`ratingDropdown-${ticket._id}`}>Select Rating:</label>
-					<select
-						id={`ratingDropdown-${ticket._id}`}
-						value={newRating}
-						onChange={(e) => setNewRating(e.target.value)}
-					>
-						{[1, 2, 3, 4, 5].map((value) => (
-							<option key={value} value={value}>
-								{value}
-							</option>
-						))}
-					</select>
-					<button onClick={handleRatingChange} className="change-rating-button">
-						Change Rating
+				<>
+					<div className="rating-section">
+						<label htmlFor={`ratingDropdown-${ticket._id}`}>
+							Select Rating:
+						</label>
+						<select
+							id={`ratingDropdown-${ticket._id}`}
+							value={newRating}
+							onChange={(e) => setNewRating(e.target.value)}
+						>
+							{[1, 2, 3, 4, 5].map((value) => (
+								<option key={value} value={value}>
+									{value}
+								</option>
+							))}
+						</select>
+						<button
+							onClick={handleRatingChange}
+							className="change-rating-button"
+						>
+							Change Rating
+						</button>
+					</div>
+					<button onClick={handleCreateChat} className="change-rating-button">
+						Start Chat
 					</button>
-				</div>
+				</>
 			) : null}
-			{localStorage.getItem("role") === "agent" && ticket.status != "closed"? (
-				<button
-					onClick={handleUpdateForm}
-					className="change-rating-button"
-				>
+			{localStorage.getItem("role") === "agent" && ticket.status != "closed" ? (
+				<button onClick={handleUpdateForm} className="change-rating-button">
 					update ticket
 				</button>
 			) : null}
-      <p></p>
+			<p></p>
 			{localStorage.getItem("role") === "agent" && ticket.status != "closed" ? (
 				<button onClick={handleClose} className="change-rating-button">
 					close ticket

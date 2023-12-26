@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { Button, Modal, Form, Card, Row, Col, Dropdown } from "react-bootstrap";
 import AppNavBar from "../components/navbar";
 import "../styles/Brands.css";
 
 const UserList = () => {
+	const navigate = useNavigate();
 	const [users, setUsers] = useState([]);
 	const [showCreateUserModal, setShowCreateUserModal] = useState(false);
 	const [newUser, setNewUser] = useState({
@@ -22,6 +24,9 @@ const UserList = () => {
 
 	useEffect(() => {
 		// Fetch all users from the backend when the component mounts
+		if (localStorage.getItem("role") !== "admin") {
+			navigate("/");
+		}
 		axios
 			.get("http://localhost:3000/api/users/get-all-users", {
 				withCredentials: true,
@@ -31,6 +36,10 @@ const UserList = () => {
 			})
 			.catch((error) => {
 				console.error("Error fetching users:", error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
 			});
 	}, []); // Empty dependency array ensures that this effect runs once on mount
 
@@ -77,10 +86,18 @@ const UserList = () => {
 					})
 					.catch((error) => {
 						console.error("Error fetching users:", error);
+						if (error.response.status == 403) {
+							removeCookies("token");
+							navigate("/");
+						}
 					});
 			})
 			.catch((error) => {
 				console.error("Error creating user:", error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
 				// You may want to display an error message
 			});
 	};
@@ -112,10 +129,18 @@ const UserList = () => {
 						})
 						.catch((error) => {
 							console.error("Error fetching users:", error);
+							if (error.response.status == 403) {
+								removeCookies("token");
+								navigate("/");
+							}
 						});
 				})
 				.catch((error) => {
 					console.error("Error assigning role:", error);
+					if (error.response.status == 403) {
+						removeCookies("token");
+						navigate("/");
+					}
 					// You may want to display an error message
 				})
 				.finally(() => {
@@ -143,10 +168,18 @@ const UserList = () => {
 					})
 					.catch((error) => {
 						console.error("Error fetching users:", error);
+						if (error.response.status == 403) {
+							removeCookies("token");
+							navigate("/");
+						}
 					});
 			})
 			.catch((error) => {
 				console.error("Error deleting user:", error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
 				// You may want to display an error message
 			});
 	};

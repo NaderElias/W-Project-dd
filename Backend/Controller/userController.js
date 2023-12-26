@@ -109,7 +109,7 @@ const userController = {
 					.status(200)
 					.json({ message: "User logged out successfully" });
 			} else {
-				return res.status(400).json({ message: "User is already logged out" });
+				return res.status(403).json({ message: "User is already logged out" });
 			}
 		} catch (error) {
 			console.error("Error in userController.logout: ", error);

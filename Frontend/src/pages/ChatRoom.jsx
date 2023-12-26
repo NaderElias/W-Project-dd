@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import { Container, Form, Button, Col, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import AppNavBar from "../components/navbar";
@@ -11,6 +12,7 @@ let backend_url = "http://localhost:3000/api";
 let socket;
 
 const ChatComponent = () => {
+	const navigate = useNavigate();
 	const [userName, setUserName] = useState("");
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState([
@@ -31,6 +33,10 @@ const ChatComponent = () => {
 			})
 			.catch((error) => {
 				console.log(error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
 			});
 		//ffffffff
 		socket = io("http://localhost:3000");
@@ -52,6 +58,10 @@ const ChatComponent = () => {
 			})
 			.catch((error) => {
 				console.log(error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
 			});
 
 		// Call the async function
@@ -77,13 +87,20 @@ const ChatComponent = () => {
 		const chatId = localStorage.getItem("chatId");
 		const senderId = localStorage.getItem("userId");
 		socket.emit("chat message", `${userName},${message},${chatId}`);
-		await axios.put(
-			`${backend_url}/chats/add-message?_id=${chatId}`,
-			{ message: message, senderId: senderId },
-			{ withCredentials: true }
-		);
-		setMessage("");
-		setShowEmojiPicker(false);
+		try {
+			await axios.put(
+				`${backend_url}/chats/add-message?_id=${chatId}`,
+				{ message: message, senderId: senderId },
+				{ withCredentials: true }
+			);
+			setMessage("");
+			setShowEmojiPicker(false);
+		} catch (error) {
+			if (error.response.status == 403) {
+				removeCookies("token");
+				navigate("/");
+			}
+		}
 	};
 
 	return (

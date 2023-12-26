@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import AppNavBar from "../components/navbar";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 let backend_url = "http://localhost:3000/api";
 import "../styles/Brands.css";
 
 export default function FAQPage() {
+	const navigate = useNavigate();
 	const [faqs, setFaqs] = useState([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [filteredFaqs, setFilteredFaqs] = useState([]);
@@ -23,6 +25,14 @@ export default function FAQPage() {
 				setFilteredFaqs(data);
 			} catch (error) {
 				console.error("Error fetching FAQs:", error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
+			}
+
+			if(localStorage.getItem("role") === "manager" || localStorage.getItem("role") === "agent"){
+				navigate("/")
 			}
 		};
 

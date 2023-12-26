@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "react-modal";
+import { useNavigate } from "react-router-dom";
 import "../styles/Tickets.css";
 import TicketCard from "../components/TicketCard";
 import AppNavBar from "../components/navbar";
@@ -9,6 +10,7 @@ import "../styles/Brands.css";
 Modal.setAppElement("#root"); // Set the root element for the modal
 
 function Tickets() {
+	const navigate = useNavigate();
 	const [tickets, setTickets] = useState([]);
 	const [op, setOp] = useState(1);
 	const [isModalOpen, setModalOpen] = useState(false);
@@ -34,7 +36,13 @@ function Tickets() {
 					}
 				)
 				.then((response) => setTickets(response.data.tickets))
-				.catch((error) => console.error("Error fetching tickets:", error));
+				.catch((error) => {
+					console.error("Error fetching tickets:", error);
+					if (error.response.status == 403) {
+						removeCookies("token");
+						navigate("/");
+					}
+				});
 		} else if (localStorage.getItem("role") === "user") {
 			axios
 				.get(
@@ -46,14 +54,26 @@ function Tickets() {
 					}
 				)
 				.then((response) => setTickets(response.data.tickets))
-				.catch((error) => console.error("Error fetching tickets:", error));
+				.catch((error) => {
+					console.error("Error fetching tickets:", error);
+					if (error.response.status == 403) {
+						removeCookies("token");
+						navigate("/");
+					}
+				});
 		} else {
 			axios
 				.get("http://localhost:3000/api/tickets/get-All-Tickets", {
 					withCredentials: true,
 				})
 				.then((response) => setTickets(response.data.tickets))
-				.catch((error) => console.error("Error fetching tickets:", error));
+				.catch((error) => {
+					console.error("Error fetching tickets:", error);
+					if (error.response.status == 403) {
+						removeCookies("token");
+						navigate("/");
+					}
+				});
 		}
 	}, []); // Empty dependency array ensures the effect runs once on mount
 
@@ -86,7 +106,13 @@ function Tickets() {
 					setWorkFlow(response.data.workFlow.workflow);
 				}
 			})
-			.catch((error) => console.error("Error fetching workFlow:", error));
+			.catch((error) => {
+				console.error("Error fetching workFlow:", error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
+			});
 	};
 
 	const handleInputChange = async (e) => {
@@ -107,7 +133,13 @@ function Tickets() {
 				newTicket,
 				{ withCredentials: true }
 			)
-			.catch((error) => console.error("Error creating ticket:", error));
+			.catch((error) => {
+				console.error("Error creating ticket:", error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
+			});
 
 		closeModal();
 		setOp(op + 1);
@@ -155,7 +187,10 @@ function Tickets() {
 						)}
 					</div>
 					{localStorage.getItem("role") === "user" ? (
-						<button className="newTicketButton position-fixed bottom-0 end-0 mb-3 me-3" onClick={openModal}>
+						<button
+							className="newTicketButton position-fixed bottom-0 end-0 mb-3 me-3"
+							onClick={openModal}
+						>
 							Create New Ticket
 						</button>
 					) : null}

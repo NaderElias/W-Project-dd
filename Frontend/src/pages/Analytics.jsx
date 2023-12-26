@@ -1,11 +1,13 @@
 import { PieChart, Pie, Cell, Legend } from "recharts";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import AppNavBar from "../components/navbar";
 import axios from "axios";
 import "../styles/Brands.css";
 
 const AnalyticsPage = () => {
+	const navigate = useNavigate();
 	const [analyticsData, setAnalyticsData] = useState(null);
 	useEffect(() => {
 		const fetchData = async () => {
@@ -17,8 +19,15 @@ const AnalyticsPage = () => {
 				setAnalyticsData(response.data);
 			} catch (error) {
 				console.error("Error fetching analytics data:", error);
+				if (error.response.status == 403) {
+					removeCookies("token");
+					navigate("/");
+				}
 			}
 		};
+		if(localStorage.getItem("role") === "user" || localStorage.getItem("role") === "agent"){
+			navigate("/")
+		}
 
 		fetchData();
 	}, []); // Empty dependency array ensures that this effect runs once when the component mounts
@@ -72,7 +81,7 @@ const AnalyticsPage = () => {
 	return (
 		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
-			<div class="page-background">
+			<div className="page-background">
 				<Container>
 					<PieChart width={700} height={700} margin={50}>
 						<Pie

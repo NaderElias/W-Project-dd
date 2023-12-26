@@ -29,6 +29,10 @@ const brandSchema = mongoose.Schema({
       type: String,
       validate: [colorValidator, 'not a valid color']
     }
+  },
+  selected: {
+    type: Boolean,
+    default: false
   }
 });
 
