@@ -3,7 +3,7 @@ const sessionModel = require("../Models/sessionModel");
 const ticketsModel = require("../Models/ticketModel");
 const usersModel = require("../Models/userModel");
 const emailService = require("../Controller/emailUpdateController");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { spawn } = require("child_process");
 const { PythonShell } = require("python-shell");
 const axios = require("axios");
@@ -126,7 +126,7 @@ const ticketController = {
     console.log("suc");
     return res.status(200).json({ message: "me" });
 
-  /*
+    /*
 		try {
 			// Delete all documents in the ticketsModel collection
 			const result = await ticketsModel.deleteMany({});
@@ -141,16 +141,16 @@ const ticketController = {
     try {
       // Extract ticket data from the request body
       const { title, description, category, subCategory, priority } = req.body;
-      const query=req.query;
+      const query = req.query;
       const userId = query.userId;
-      const status = "open";   
+      const status = "open";
       const rating = 0;
       const createdAt = new Date();
       let assignedAgentId = null;
       const workflow = "";
       let x = 0;
       const newTicket = new ticketsModel({
-        userId, 
+        userId,
         title,
         description,
         status,
@@ -164,7 +164,7 @@ const ticketController = {
       });
       //check if the ticket already exists
       const existingTicket = await ticketsModel.findOne({
-        title: title, 
+        title: title,
         userId: userId,
         category: category,
         subCategory,
@@ -187,14 +187,20 @@ const ticketController = {
   getAllTickets: async (req, res) => {
     try {
       //getting all reports and outputting them
-      const query = req.query; 
-      if(query.assignedAgentId){
-        const agentTickets= await ticketsModel.find({assignedAgentId:query.assignedAgentId}).sort({createdAt:-1});
-        return res.status(200).json({message:'agent tickets',tickets:agentTickets});
+      const query = req.query;
+      if (query.assignedAgentId) {
+        const agentTickets = await ticketsModel
+          .find({ assignedAgentId: query.assignedAgentId })
+          .sort({ createdAt: -1 });
+        return res
+          .status(200)
+          .json({ message: "agent tickets", tickets: agentTickets });
       }
-      if(query.userId){ 
-        const userTickets = await ticketsModel.find({userId:query.userId});
-        return res.status(200).json({message:'user tickets',tickets:userTickets});
+      if (query.userId) {
+        const userTickets = await ticketsModel.find({ userId: query.userId });
+        return res
+          .status(200)
+          .json({ message: "user tickets", tickets: userTickets });
       }
       if (query._id) {
         const partTicket = await ticketsModel.findById(query._id);
@@ -245,7 +251,7 @@ const ticketController = {
 
   updateTicket: async (req, res) => {
     try {
-      const {_id} = req.query
+      const { _id } = req.query;
       bod = req.body;
       var mess = "ticket updated";
       if (!_id) {
@@ -288,8 +294,8 @@ const ticketController = {
     }
   },
   updateRating: async (req, res) => {
-    const  {_id}  = req.query;
-    const {rating} = req.body;
+    const { _id } = req.query;
+    const { rating } = req.body;
     //check if the user is the one who created the ticket
     if (!rating || !_id) {
       return res.status(404).json({ message: "rating or id missing" });
@@ -302,7 +308,7 @@ const ticketController = {
     await ticket.save();
     return res
       .status(200)
-      .json({ message: "rating successfully updated", ticket:ticket });
+      .json({ message: "rating successfully updated", ticket: ticket });
   },
 };
 module.exports = { ticketController, checkQ };
