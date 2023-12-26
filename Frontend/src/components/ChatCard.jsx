@@ -12,7 +12,7 @@ const ChatCard = ({ userId, agentId, chatId }) => {
     localStorage.setItem("chatId", chatId);
     navigate("/chatroom");
   };
-  //New commentzzzzz
+  //New commen
   useEffect(() => {
     const fetchUserData = async () => {
       try {
