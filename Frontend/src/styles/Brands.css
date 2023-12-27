@@ -155,6 +155,9 @@
     /* Add more styling as needed */
 }
 
+.modal {
+  height: max-content;
+}
 
 
 

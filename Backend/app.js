@@ -107,6 +107,7 @@ function backupMongoDB() {
   });
 }
 
+// restore: mongorestore --uri="mongodb+srv://ziadshafiq7:qwer1234QWER@cluster0.wbady4f.mongodb.net" --archive=./Backup/backup.gzip --gzip
 cron.schedule("0 0 * * *", () => {
   backupMongoDB();
 });

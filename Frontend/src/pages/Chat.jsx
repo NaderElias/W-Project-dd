@@ -32,14 +32,6 @@ export default function ChatsPage() {
 			}
 		}
 	};
-	useEffect(() => {
-		if (
-			localStorage.getItem("role") === "manager" ||
-			localStorage.getItem("role") === "agent"
-		) {
-			getChats();
-		}
-	}, []);
 	const createNotification = async (agentId) => {
 		try {
 			const chatId = localStorage.getItem("chatId");
@@ -88,6 +80,17 @@ export default function ChatsPage() {
 			}
 		}
 	};
+	useEffect(() => {
+		if (
+			localStorage.getItem("role") === "manager" ||
+			localStorage.getItem("role") === "agent"
+		) {
+			getChats();
+		} else if (localStorage.getItem("role") === "user") {
+			handleCreateChat();
+		}
+	}, []);
+
 	const handleDeleteNotification = async (_id) => {
 		try {
 			const response = await axios.delete(
@@ -141,11 +144,6 @@ export default function ChatsPage() {
 		<div className={`test ${localStorage.getItem("theme-color")}`}>
 			<AppNavBar />
 			<div class="page-background">
-				{localStorage.getItem("role") === "user" && (
-					<Button onClick={handleCreateChat} className="navbar-buttons">
-						Start Chat
-					</Button>
-				)}
 				<Container fluid>
 					<p>.</p>
 					<Row>

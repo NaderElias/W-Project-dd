@@ -70,7 +70,6 @@ async function checkQ() {
     },
   ]);
 
-  console.log(tickets);
   if (!tickets) {
     return;
   }
@@ -99,7 +98,7 @@ async function checkQ() {
 
           await ticketsModel.updateOne(
             { _id: ticket._id },
-            { assignedAgentId: agentUser._id.toString() },
+            { assignedAgentId: agentUser._id.toString(), status: "in progress" },
             { status: "in progress" }
           );
           break;
@@ -123,19 +122,7 @@ async function checkQ() {
 const ticketController = {
   deletea: async (req, res) => {
     checkQ();
-    console.log("suc");
     return res.status(200).json({ message: "me" });
-
-  /*
-		try {
-			// Delete all documents in the ticketsModel collection
-			const result = await ticketsModel.deleteMany({});
-			console.log(`${result.deletedCount} documents deleted from ticketsModel`);
-
-		  } catch (error) {
-			console.error('Error deleting documents:', error);
-		  } 
-			// Disconnect from MongoDB*/
   },
   createTicket: async (req, res) => {
     try {
@@ -253,7 +240,6 @@ const ticketController = {
       }
       const { status, resolutionDetails, rating, workflow } = req.body;
       const ticketUpdate = await ticketsModel.findById(_id);
-      console.log(ticketUpdate);
 
       if (status && status == "closed") {
         const closedAt = new Date();

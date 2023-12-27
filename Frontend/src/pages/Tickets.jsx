@@ -141,6 +141,15 @@ function Tickets() {
 				}
 			});
 
+		const tickets = await axios.get(
+			`http://localhost:3000/api/tickets/get-All-Tickets?userId=${localStorage.getItem(
+				"userId"
+			)}`,
+			{
+				withCredentials: true,
+			}
+		);
+		setTickets(tickets.data.tickets)
 		closeModal();
 		setOp(op + 1);
 		// Close the modal after creating the ticket
@@ -153,13 +162,14 @@ function Tickets() {
 			"Custom software",
 			"Integration issues",
 		],
-		hardware: ["Desktops", "Laptops", "Printers", "Servers"],
-		network: [
+		hardware: [
+			"Desktops",
+			"Laptops",
+			"Printers",
+			"Servers",
 			"Networking equipment",
-			"Email issues",
-			"Internet connection problems",
-			"Website errors",
 		],
+		network: ["Email issues", "Internet connection problems", "Website errors"],
 	};
 
 	const subCategoriesOptions =
@@ -204,8 +214,6 @@ function Tickets() {
 						overlayClassName="overlay"
 					>
 						<div className="modal-content">
-							<h2>Create New Ticket</h2>
-
 							<div className="form-group">
 								<label htmlFor="category">Category:</label>
 								<select
@@ -270,6 +278,7 @@ function Tickets() {
 										onChange={handleInputChange}
 										className="select-dropdown"
 									>
+										<option value="">Select Priority</option>
 										<option value="high">High</option>
 										<option value="medium">Medium</option>
 										<option value="low">Low</option>
